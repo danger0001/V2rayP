@@ -40,3 +40,13 @@ Welcome to V2RayP, an innovative and robust multiplatform project that brings en
 
 - **Get Involved:** Whether you're a seasoned developer or a curious enthusiast, there are numerous ways to get involved and support V2RayP. Help us shape the future of secure and efficient network communication!
 
+- **Copyright**
+- All Rights Reserved License
+
+This software and its accompanying documentation are protected by copyright law and international treaties. Unauthorized reproduction, distribution, or modification of this software, in whole or in part, without prior written permission from the copyright holder, is strictly prohibited.
+
+Permission is granted to use this software for personal, non-commercial purposes only, provided that you retain all copyright and other proprietary notices within the source code and any accompanying documentation.
+
+THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
