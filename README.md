@@ -11,7 +11,7 @@ python3 -m pip install v2rayp
 ## Execution
 
 ```
-python3 -m v2ray
+python3 -m v2rayp
 ```
 ## Prequisites
 
