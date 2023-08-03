@@ -40,7 +40,7 @@ Welcome to V2RayP, an innovative and robust multiplatform project that brings en
 
 - **Get Involved:** Whether you're a seasoned developer or a curious enthusiast, there are numerous ways to get involved and support V2RayP. Help us shape the future of secure and efficient network communication!
 
-- **Copyright**
+## Copyright
 - All Rights Reserved License
 
 This software and its accompanying documentation are protected by copyright law and international treaties. Unauthorized reproduction, distribution, or modification of this software, in whole or in part, without prior written permission from the copyright holder, is strictly prohibited.
