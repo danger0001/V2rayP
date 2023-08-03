@@ -27,7 +27,7 @@ setup(
     description="An efficient and versatile multiplatform project, serving as a v2rayn substitute for Windows, while seamlessly functioning on Mac and Linux, featuring fragmentation support and multi-threaded capabilities.",  # Give a short description about your library
     author="Iman iBlockchain",  # Type in your name
     author_email="iman.minstry@gmail.com",  # Type in your E-Mail
-    url="https://github.com/iblockchaincyberchain/V2rayP",  # Provide either the link to your github or to your website
+    url="https://github.com/iblockchaincyberchain/v2rayp",  # Provide either the link to your github or to your website
     # download_url="https://github.com/iblockchaincyberchain/V2rayP/releases/download/untagged-56f596c21486f79c4a17/V2rayP.zip",  # I explain this later on
     keywords=[
         "Fragmentation",
