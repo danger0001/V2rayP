@@ -1,7 +1,18 @@
-** Multiplatform Application
+## Multiplatform Application
 
 It is evaluated on Windows 10, 11 x64 and Linux Ubuntu AMD64 and Mac OS X AMD64
 
+## Installing
+
+```bash
+python3 -m pip install v2rayp
+```
+
+## Execution
+
+```
+python3 -m v2ray
+```
 ## Prequisites
 
 Before you begin, make sure you have the following packages installed:
