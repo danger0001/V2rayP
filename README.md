@@ -38,11 +38,11 @@ sudo apt-get update
 sudo apt-get install xclip python3-tk
 ```
 ## Program Capability
-**Part 1: Overview**
+**Overview**
 
 Welcome to V2RayP, an innovative and robust multiplatform project that brings enhanced functionality to your network communications. This powerful tool serves as a replacement for v2rayn on Windows, while seamlessly extending its capabilities to both Mac and Linux environments. With support for fragmentation and multi-threaded operations, V2RayP ensures a smooth and secure internet experience for users across various platforms.
 
-**Part 2: Features**
+**Features**
 
 - **Multiplatform Compatibility:** V2RayP is designed to be compatible with multiple operating systems, including Windows, Mac, and Linux, allowing users to enjoy its benefits on their preferred platform.
 
@@ -52,7 +52,14 @@ Welcome to V2RayP, an innovative and robust multiplatform project that brings en
 
 - **Multi-threaded Efficiency:** V2RayP takes advantage of multi-threading to process concurrent tasks efficiently, maximizing resource utilization and delivering faster data throughput.
 
-**Part 3: Benefits**
+
+**Fragmentation**
+
+The application boasts a remarkable feature by providing support for fragmentation (or segmentation) in the SNI (Server Name Indication) handshake. This capability ensures improved security and efficiency during the handshake process. To enable this functionality, users can easily navigate to the "File" menu and access the "Settings" option. Within the settings, they can set the Cloudflare IP, which helps enhance the overall performance and reliability of the application. Furthermore, users can seamlessly integrate the server's configuration by copying and pasting it directly into the application, streamlining the setup process and ensuring a smooth experience for users. With these straightforward steps, users can leverage the app's fragmentation support and enjoy an enhanced level of security and performance during their communication and data exchange activities.
+
+
+
+**Benefits**
 
 - **Enhanced Cross-Platform Flexibility:** Enjoy the freedom to switch between Windows, Mac, and Linux without compromising on functionality. V2RayP ensures a seamless experience across different platforms, making it a versatile choice for diverse user needs.
 
@@ -62,7 +69,7 @@ Welcome to V2RayP, an innovative and robust multiplatform project that brings en
 
 - **Simplified User Experience:** With its user-friendly interface and straightforward configuration, V2RayP makes it easy for both beginners and advanced users to manage and customize their network settings effortlessly.
 
-**Part 4: Security**
+**Security**
 
 - **Robust Encryption:** V2RayP prioritizes user privacy and data security by employing advanced encryption techniques, safeguarding sensitive information from potential threats.
 
@@ -70,7 +77,7 @@ Welcome to V2RayP, an innovative and robust multiplatform project that brings en
 
 - **Privacy Protection:** V2RayP respects user privacy and anonymity, offering a reliable shield against prying eyes and ensuring a safe online environment.
 
-**Part 5: Open-Source and Community**
+**Open-Source and Community**
 
 - **Open-Source Project:** V2RayP is an open-source initiative, allowing developers to collaborate, contribute, and customize the project to suit their specific needs.
 
