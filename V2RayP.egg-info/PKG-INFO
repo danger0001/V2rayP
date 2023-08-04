@@ -1,9 +1,9 @@
 Metadata-Version: 2.1
 Name: v2rayp
-Version: 0.7b23
+Version: 0.7b24
 Summary: An efficient and versatile multiplatform project, serving as a v2rayn substitute for Windows, while seamlessly functioning on Mac and Linux, featuring fragmentation support and multi-threaded capabilities.
-Home-page: https://github.com/iblockchaincyberchain/V2rayP
-Author: Iman iBlockchain
+Home-page: https://github.com/iblockchaincyberchain/v2rayp
+Author: iBlockchain
 Author-email: iman.minstry@gmail.com
 License: MIT
 Keywords: Fragmentation,V2Ray,multiplatform,VPN,Proxy
