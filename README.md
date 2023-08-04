@@ -2,7 +2,9 @@
 
 ## Multiplatform Application
 
-It is evaluated on Windows 10, 11 x64 and Linux Ubuntu AMD64 and Mac OS X AMD64
+It is evaluated on Windows 10, 11 x64 and Linux Ubuntu AMD64 and Mac OS X AMD64.
+
+The software undergoes thorough evaluation across multiple operating systems to ensure its compatibility and performance on various platforms. Specifically, the evaluation process encompasses Windows 10 and Windows 11 in their 64-bit versions, as well as Linux Ubuntu on AMD64 architecture and Mac OS X on AMD64 architecture as well. By conducting comprehensive testing on these operating systems, the development team can identify and address any platform-specific issues, optimize the software's performance, and guarantee a seamless user experience across different environments. This commitment to cross-platform compatibility demonstrates the software's versatility and its ability to cater to a wide range of users, regardless of their preferred operating system.
 
 ## Fragmentation
 
