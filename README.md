@@ -13,7 +13,7 @@ python3 -m pip install v2rayp
 ```
 python3 -m v2rayp
 ```
-## Prequisites
+## Prequisites in Ubuntu
 
 Before you begin, make sure you have the following packages installed:
 
