@@ -6,7 +6,9 @@ It is evaluated on Windows 10, 11 x64 and Linux Ubuntu AMD64 and Mac OS X AMD64
 
 ## Fragmentation
 
-The application boasts a remarkable feature by providing support for fragmentation in the SNI (Server Name Indication) handshake. This capability ensures improved security and efficiency during the handshake process. To enable this functionality, users can easily navigate to the "File" menu and access the "Settings" option. Within the settings, they can set the Cloudflare IP, which helps enhance the overall performance and reliability of the application. Furthermore, users can seamlessly integrate the server's configuration by copying and pasting it directly into the application, streamlining the setup process and ensuring a smooth experience for users. With these straightforward steps, users can leverage the app's fragmentation support and enjoy an enhanced level of security and performance during their communication and data exchange activities.
+The application boasts a remarkable feature by providing support for fragmentation (or segmentation) in the SNI (Server Name Indication) handshake. This capability ensures improved security and efficiency during the handshake process. To enable this functionality, users can easily navigate to the "File" menu and access the "Settings" option. Within the settings, they can set the Cloudflare IP, which helps enhance the overall performance and reliability of the application. Furthermore, users can seamlessly integrate the server's configuration by copying and pasting it directly into the application, streamlining the setup process and ensuring a smooth experience for users. With these straightforward steps, users can leverage the app's fragmentation support and enjoy an enhanced level of security and performance during their communication and data exchange activities.
+
+![Fragmentation](https://github.com/iblockchaincyberchain/V2rayP/blob/main/readme_pics/fragmentation.jpg)
 
 
 ## Installing
