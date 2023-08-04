@@ -1,3 +1,5 @@
+![GUI Overview](https://github.com/iblockchaincyberchain/V2rayP/blob/main/readme_pics/gui.jpg)
+
 ## Multiplatform Application
 
 It is evaluated on Windows 10, 11 x64 and Linux Ubuntu AMD64 and Mac OS X AMD64
