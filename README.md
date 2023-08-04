@@ -26,7 +26,7 @@ If you are using a Debian-based Linux distribution (e.g., Ubuntu), you can insta
 sudo apt-get update
 sudo apt-get install xclip python3-tk
 ```
-
+## Program Capability
 **Part 1: Overview**
 
 Welcome to V2RayP, an innovative and robust multiplatform project that brings enhanced functionality to your network communications. This powerful tool serves as a replacement for v2rayn on Windows, while seamlessly extending its capabilities to both Mac and Linux environments. With support for fragmentation and multi-threaded operations, V2RayP ensures a smooth and secure internet experience for users across various platforms.
