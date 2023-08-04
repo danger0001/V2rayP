@@ -15,7 +15,7 @@ python3 -m v2rayp
 ```
 ## Prequisites in Ubuntu
 
-Before you begin, make sure you have the following packages installed:
+Before you begin in ubuntu, make sure you have the following packages installed:
 
 - xclip
 - python3-tk
