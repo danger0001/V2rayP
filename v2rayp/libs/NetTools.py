@@ -1,12 +1,48 @@
+import functools
 import os
 import time
+from threading import Thread
 
 import requests
-
 from libs.in_win import config_path
 
 
 class NetTools:
+    @staticmethod
+    def timeout(timeout):
+        def deco(func):
+            @functools.wraps(func)
+            def wrapper(*args, **kwargs):
+                res = [
+                    Exception(
+                        "1366_function [%s] timeout [%s seconds] exceeded!"
+                        % (func.__name__, timeout)
+                    )
+                ]
+
+                def newTargetFunc():
+                    try:
+                        res[0] = func(*args, **kwargs)
+                    except Exception as e:
+                        res[0] = e
+
+                t = Thread(target=newTargetFunc)
+                t.daemon = True
+                try:
+                    t.start()
+                    t.join(timeout)
+                except Exception as je:
+                    print("error starting thread")
+                    raise je
+                ret = res[0]
+                if isinstance(ret, BaseException):
+                    raise ret
+                return ret
+
+            return wrapper
+
+        return deco
+
     @staticmethod
     def measure_ping_through_socks_proxy(
         proxy_address, proxy_address_port, target_host
@@ -26,6 +62,7 @@ class NetTools:
         return ping_delay
 
     @staticmethod
+    # @timeout(5)
     def is_connected_to_internet(address="https://www.yahoo.com", lport=7595):
         proxy = {
             "http": f"socks5://127.0.0.1:{lport}",

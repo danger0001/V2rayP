@@ -9,7 +9,6 @@ import uuid
 from contextlib import redirect_stdout
 
 import psutil
-
 from __version__ import __version__
 
 # sys.path.append(
@@ -22,7 +21,6 @@ os.chdir(current_dir)
 width = 1000
 import pyperclip
 import PySimpleGUI as psg
-
 from libs.ConnectGost import ConnectGost
 from libs.ConnectV2Ray import ConnectV2Ray
 from libs.ExportURLfromConfig import ExportURLfromConfig
@@ -483,6 +481,7 @@ class MainGUI:
     def check_connection(self):
         self.thread_exit = threading.Event()
         while self.enable_loops:
+            print("\n\nconnection check\n\n")
             self.isConnected = NetTools.is_connected_to_internet(
                 "https://www.yahoo.com", int(self.local_port)
             )
