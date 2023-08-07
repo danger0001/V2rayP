@@ -2,6 +2,7 @@ LICENSE.txt
 README.md
 setup.cfg
 setup.py
+v2rayp/.gitignore
 v2rayp/Instruction_offline_packages.txt
 v2rayp/__init__.py
 v2rayp/__main__.py
