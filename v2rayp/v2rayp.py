@@ -34,7 +34,7 @@ from libs.GUIs.VmessGUI import VmessGUI
 from libs.in_win import (
     FactorySetting,
     config_path,
-    download_xray,
+    download_xray_gost,
     inside_windows,
     pass_by_ref,
 )
@@ -119,7 +119,9 @@ class MainGUI:
         ]
         c2 = [
             psg.Input(
-                default_text=self.gui_data["subscription"],
+                default_text=self.gui_data["subscription"]
+                if "subscription" in self.gui_data
+                else "",
                 key="subscription",
                 size=(25),
             ),
@@ -481,7 +483,6 @@ class MainGUI:
     def check_connection(self):
         self.thread_exit = threading.Event()
         while self.enable_loops:
-            print("\n\nconnection check\n\n")
             self.isConnected = NetTools.is_connected_to_internet(
                 "https://www.yahoo.com", int(self.local_port)
             )
@@ -691,21 +692,26 @@ class MainGUI:
             profileName = config_json["_comment"]["remark"]
             config_json["inbounds"][0]["port"] = int(self.local_port)
             # config_json["inbounds"][1]["port"] = int(self.local_port) + 1
+            path = f"{config_path()}\\v2ray_profiles\\"
+
+            if not inside_windows():
+                path = path.replace("\\", "/")
+            os.mkdir(path)
             with open(
-                f"{config_path()}\\v2ray_profiles\\{profileName}.json"
-                if inside_windows()
-                else f"{config_path()}/v2ray_profiles/{profileName}.json",
+                f"{path}{profileName}.json",
                 "w",
             ) as f:
                 json.dump(config_json, f)
 
         else:
+            path = f"{config_path()}\\gost_profiles\\"
             config_json = url
             profileName = f'{url["remote_protocol"]}_{url["remote_port"]}'
+            if not inside_windows():
+                path = path.replace("\\", "/")
+            os.mkdir(path)
             with open(
-                f"{config_path()}\\gost_profiles\\{profileName}.json"
-                if inside_windows()
-                else f"{config_path()}/gost_profiles/{profileName}.json",
+                f"{path}{profileName}.json",
                 "w",
             ) as f:
                 json.dump(config_json, f)
@@ -744,7 +750,7 @@ class MainGUI:
                 path = f"{path}.exe"
             if not os.path.isfile(path):
                 resp = psg.popup_ok_cancel("Please download gost", keep_on_top=True)
-                if resp == "Yes":
+                if resp == "OK":
                     self.download_module("gost")
                     return
         #######################################
@@ -1012,8 +1018,9 @@ class MainGUI:
         )
         enable_download = pass_by_ref()
         enable_download.value = True
+
         threading.Thread(
-            target=download_xray,
+            target=download_xray_gost,
             args=(self.progressbar_window, enable_download, bin_name),
         ).start()
         while True:
