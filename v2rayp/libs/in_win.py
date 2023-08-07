@@ -59,7 +59,7 @@ class FactorySetting:
 tmp = temp()
 
 
-def download_xray(window, enable_download: pass_by_ref, filename):
+def download_xray_gost(window, enable_download: pass_by_ref, filename):
     if filename == "xray":
         if platform.system() == "Windows":
             url = "https://github.com/iblockchaincyberchain/V2rayP/raw/main/bin/win/v2ray/xray.exe"
