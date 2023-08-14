@@ -124,16 +124,32 @@ class SaveGUIConfigPage:
             data = json.load(json_file)
         return data
 
+    def create_path_if_not_exists(self, path):
+        if not os.path.exists(path):
+            try:
+                os.makedirs(path)  # This will create directories recursively
+                print(f"Path '{path}' did not exist. Created successfully.")
+            except OSError as e:
+                print(f"Error creating path '{path}': {e}")
+        else:
+            print(f"Path '{path}' already exists.")
+
     def save_data(self, data) -> json:
         if "protocol" in self.page_data:
             if self.page_data["protocol"] in ("vless", "vmess", "trojan"):
-                json_config_path = (
-                    f"{config_path()}\\v2ray_profiles{self.group_path}\\{self.remark}"
-                )
+                path = f"{config_path()}\\v2ray_profiles{self.group_path}\\"
+                if not inside_windows():
+                    path = path.replace("\\", "/")
+                json_config_path = f"{path}{self.remark}"
         else:
-            json_config_path = (
-                f"{config_path()}\\gost_profiles{self.group_path}\\{self.remark}"
-            )
+            path = f"{config_path()}\\gost_profiles{self.group_path}\\"
+            if not inside_windows():
+                path = path.replace("\\", "/")
+
+            json_config_path = f"{path}{self.remark}"
+
+        self.create_path_if_not_exists(path)
+
         with open(json_config_path, "w") as json_file:
             # Load the JSON data
             json.dump(data, json_file)
