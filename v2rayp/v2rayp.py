@@ -941,17 +941,21 @@ class MainGUI:
         xray_about_path = f"{config_path()}\\bin\\xray.exe"
         if not inside_windows():
             xray_about_path = xray_about_path.replace("\\", "/").replace(".exe", "")
-
+        gost_string = []
         if os.path.isfile(gost_about_path):
             gost_string = os.popen(gost_about_path + " -V").read().strip()
-
+        xray_string = []
         if os.path.isfile(xray_about_path):
             xray_string = os.popen(xray_about_path + " version").read().strip()
 
         layout = [
             [psg.Text("The V2RayP Version:\t\t"), psg.Text(__version__)],
-            [psg.Text("The Xray Version:\t\t"), psg.Text(xray_string)],
-            [psg.Text("The Gost Version:\t\t"), psg.Text(gost_string)],
+            [psg.Text("The Xray Version:\t\t"), psg.Text(xray_string)]
+            if xray_string
+            else [],
+            [psg.Text("The Gost Version:\t\t"), psg.Text(gost_string)]
+            if gost_string
+            else [],
             [psg.Button("OK")],
         ]
         window = psg.Window(
