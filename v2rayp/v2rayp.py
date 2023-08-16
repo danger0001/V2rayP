@@ -700,7 +700,10 @@ class MainGUI:
 
             if not inside_windows():
                 path = path.replace("\\", "/")
-            os.mkdir(path)
+            try:
+                os.mkdir(path)
+            except:
+                pass
             with open(
                 f"{path}{profileName}.json",
                 "w",
@@ -713,7 +716,10 @@ class MainGUI:
             profileName = f'{url["remote_protocol"]}_{url["remote_port"]}'
             if not inside_windows():
                 path = path.replace("\\", "/")
-            os.mkdir(path)
+            try:
+                os.mkdir(path)
+            except:
+                pass
             with open(
                 f"{path}{profileName}.json",
                 "w",
@@ -1297,7 +1303,8 @@ class MainGUI:
 
         elif "New Gost" in event:
             page_data = GostGUI(None).start_window()
-            self.paste_v2ray(page_data)
+            if page_data:
+                self.paste_v2ray(page_data)
 
     def restart(self):
         python = sys.executable

@@ -1,4 +1,7 @@
 import PySimpleGUI as psg
+import sys
+
+sys.path.append("v2rayp")
 from libs.in_win import FactorySetting
 
 psg.set_options(font=("Arial Bold", 11))

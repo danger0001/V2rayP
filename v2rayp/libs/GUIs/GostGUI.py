@@ -1,5 +1,6 @@
-import json
-import os
+import json, sys
+
+sys.path.append("v2rayp")
 
 import PySimpleGUI as psg
 from libs.in_win import config_path, inside_windows
@@ -44,7 +45,7 @@ class GostGUI:
             [psg.HorizontalSeparator()],
             [psg.Text(f'{self.page_data["remark"]}')],
             [
-                psg.Text("Protocol:\t"),
+                psg.Text("Protocol:\t\t"),
                 psg.InputText(
                     default_text=self.page_data["remote_protocol"], key="protocol"
                 ),
@@ -96,6 +97,7 @@ class GostGUI:
             event, values = self.window.read()
             # print("event:", event, "values:", values)
             if event == psg.WIN_CLOSED or "cancel" in event:
+                self.page_data = None
                 break
             elif "confirm" in event:
                 self.gether_data()
