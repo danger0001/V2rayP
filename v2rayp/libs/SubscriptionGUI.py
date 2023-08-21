@@ -2,6 +2,7 @@ import json
 import os
 
 import PySimpleGUI as psg
+
 from libs.in_win import config_path, inside_windows
 
 

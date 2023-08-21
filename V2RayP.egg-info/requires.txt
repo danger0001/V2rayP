@@ -1,7 +1,0 @@
-PySimpleGUI
-psgtray
-requests
-pyperclip
-psutil
-qrcode
-setuptools
