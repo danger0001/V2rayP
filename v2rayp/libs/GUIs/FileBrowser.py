@@ -16,7 +16,7 @@ class FileBrowser:
         layout = [
             [sg.T("")],
             [sg.Text("Choose a file: "), sg.Input(), sg.FileBrowse(key="-IN-")],
-            [sg.Button("Submit")],
+            [sg.Button("Upload")],
         ]
 
         ###Building Window
@@ -26,7 +26,7 @@ class FileBrowser:
             event, values = self.window.read()
             if event == sg.WIN_CLOSED or event == "Exit":
                 break
-            elif event == "Submit":
+            elif event == "Upload":
                 value = values["-IN-"]
                 break
         try:
@@ -38,7 +38,7 @@ class FileBrowser:
         layout = [
             [sg.Text("Select a folder:")],
             [sg.Input(size=(40, 1)), sg.FolderBrowse(key="-FOLDER-")],
-            [sg.Button("Submit"), sg.Button("Exit")],
+            [sg.Button("Select"), sg.Button("Exit")],
         ]
 
         self.window = sg.Window("Folder Browser", layout)
@@ -47,7 +47,7 @@ class FileBrowser:
             event, values = self.window.read()
             if event == sg.WIN_CLOSED or event == "Exit":
                 break
-            elif event == "Browse":
+            elif event == "Select":
                 # Get the selected folder path from the Input element
                 selected_folder_path = values["-FOLDER-"]
                 # Do something with the selected folder path (e.g., print it)

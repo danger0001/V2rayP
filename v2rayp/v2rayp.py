@@ -11,10 +11,6 @@ from contextlib import redirect_stdout
 import psutil
 import pyperclip
 import PySimpleGUI as psg
-
-sys.path.append("v2rayp")
-
-
 from __version__ import __version__
 from libs.ConnectGost import ConnectGost
 from libs.ConnectV2Ray import ConnectV2Ray
@@ -26,7 +22,13 @@ from libs.GUIs.SettingGUI import SettingGUI
 from libs.GUIs.TrojanGUI import TrojanGUI
 from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
-from libs.in_win import FactorySetting, config_path, download_xray_gost, inside_windows, pass_by_ref
+from libs.in_win import (
+    FactorySetting,
+    config_path,
+    download_xray_gost,
+    inside_windows,
+    pass_by_ref,
+)
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
 from libs.RefereshEditPage import RefereshEditPage
@@ -34,6 +36,9 @@ from libs.RefereshTableContent import RefereshTableContent
 from libs.SaveGUIConfigPage import SaveGUIConfigPage
 from libs.Subscriptions import Subscriptions
 from libs.V2RayURL2Config import generateConfig
+
+# sys.path.append("v2rayp")
+
 
 # sys.path.append(
 #     "libs"
