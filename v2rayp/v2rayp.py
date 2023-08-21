@@ -9,18 +9,13 @@ import uuid
 from contextlib import redirect_stdout
 
 import psutil
-from __version__ import __version__
-
-# sys.path.append(
-#     "libs"
-# )  # add to settings.json -> "python.analysis.extraPaths": [ "libs"  ],"python.linting.pylintArgs": [ "--init-hook", "import sys; sys.path.append('libs')"]
-
-current_dir = os.path.dirname(os.path.abspath(__file__))
-
-os.chdir(current_dir)
-width = 1000
 import pyperclip
 import PySimpleGUI as psg
+
+sys.path.append("v2rayp")
+
+
+from __version__ import __version__
 from libs.ConnectGost import ConnectGost
 from libs.ConnectV2Ray import ConnectV2Ray
 from libs.ExportURLfromConfig import ExportURLfromConfig
@@ -46,8 +41,19 @@ from libs.SaveGUIConfigPage import SaveGUIConfigPage
 from libs.Subscriptions import Subscriptions
 from libs.V2RayURL2Config import generateConfig
 
+# sys.path.append(
+#     "libs"
+# )  # add to settings.json -> "python.analysis.extraPaths": [ "libs"  ],"python.linting.pylintArgs": [ "--init-hook", "import sys; sys.path.append('libs')"]
+
+
 if inside_windows():
     from psgtray import SystemTray
+
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+os.chdir(current_dir)
+width = 1000
 
 
 psg.theme("DarkGrey5")
