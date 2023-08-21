@@ -1,8 +1,9 @@
 import json
-import os
+import sys
 
 import PySimpleGUI as psg
 
+sys.path.append("v2rayp")
 from libs.in_win import config_path, inside_windows
 
 
