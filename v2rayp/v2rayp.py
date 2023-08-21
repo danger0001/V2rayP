@@ -70,13 +70,14 @@ class MainGUI:
         self.connectv2ray = None
         self.GFW_port = 2500
         self.gfw_interface = None
-        self.thrd_icon = False
+        self.thrd_check_connection = False
         self.thread_exit = None
         self.first_minimized = True
         self.settings: dict = None
         self.isHide = False
         self.show = True
         self.referesh_terminal_period = 0.5
+        self.thrd_check_connection = None
         threading.Thread(target=self._update_debug, daemon=True).start()
 
     @staticmethod
@@ -149,6 +150,7 @@ class MainGUI:
                     "Exit",
                     [
                         [
+                            psg.Button("Save", key="save"),
                             psg.Button("Exit", key="exit"),
                         ]
                     ],
@@ -483,6 +485,8 @@ class MainGUI:
     def check_connection(self):
         self.thread_exit = threading.Event()
         while self.enable_loops:
+            print("connection checking...")
+
             self.isConnected = NetTools.is_connected_to_internet(
                 "https://www.yahoo.com", int(self.local_port)
             )
@@ -610,7 +614,7 @@ class MainGUI:
 
         try:
             self.thread_exit.set()
-            self.thrd_icon.join(1)
+            self.thrd_check_connection.join(1)
             # self.thrd_icon = None
             self.tray.change_icon("assets/icons/picon_yellow.png")
         except:
@@ -696,7 +700,10 @@ class MainGUI:
 
             if not inside_windows():
                 path = path.replace("\\", "/")
-            os.mkdir(path)
+            try:
+                os.mkdir(path)
+            except:
+                pass
             with open(
                 f"{path}{profileName}.json",
                 "w",
@@ -709,7 +716,10 @@ class MainGUI:
             profileName = f'{url["remote_protocol"]}_{url["remote_port"]}'
             if not inside_windows():
                 path = path.replace("\\", "/")
-            os.mkdir(path)
+            try:
+                os.mkdir(path)
+            except:
+                pass
             with open(
                 f"{path}{profileName}.json",
                 "w",
@@ -757,10 +767,6 @@ class MainGUI:
         use_fragmentation = bool(self.window["use_fragmentation"].get())
         group = self.rows_dict[sel]["group"]
         #####################
-
-        self.thrd_icon = threading.Thread(target=self.check_connection)
-        self.thrd_icon.start()
-        ##############
         if use_fragmentation:
             ch = psg.popup_ok_cancel(
                 "The fragmentation is selected!\nAre you sure?",
@@ -810,6 +816,10 @@ class MainGUI:
             self.connect_gost.connect()
 
         self.window["connection_name"].update(filename.replace(".json", ""))
+
+        self.thrd_check_connection = threading.Thread(target=self.check_connection)
+        self.thrd_check_connection.start()
+        ##############
 
     def make_fragmentation_config_v2ray(self, file_path):
         with open(f"{file_path}", "r") as json_file:
@@ -941,17 +951,21 @@ class MainGUI:
         xray_about_path = f"{config_path()}\\bin\\xray.exe"
         if not inside_windows():
             xray_about_path = xray_about_path.replace("\\", "/").replace(".exe", "")
-
+        gost_string = []
         if os.path.isfile(gost_about_path):
             gost_string = os.popen(gost_about_path + " -V").read().strip()
-
+        xray_string = []
         if os.path.isfile(xray_about_path):
             xray_string = os.popen(xray_about_path + " version").read().strip()
 
         layout = [
             [psg.Text("The V2RayP Version:\t\t"), psg.Text(__version__)],
-            [psg.Text("The Xray Version:\t\t"), psg.Text(xray_string)],
-            [psg.Text("The Gost Version:\t\t"), psg.Text(gost_string)],
+            [psg.Text("The Xray Version:\t\t"), psg.Text(xray_string)]
+            if xray_string
+            else [],
+            [psg.Text("The Gost Version:\t\t"), psg.Text(gost_string)]
+            if gost_string
+            else [],
             [psg.Button("OK")],
         ]
         window = psg.Window(
@@ -1116,6 +1130,8 @@ class MainGUI:
             ##################
             if event in ("exit", "Exit"):
                 break
+            elif event == "save":
+                self.save_gui()
             #############################################
             elif (event in ("connect", "Connect")) or ("Enter" in event):
                 self.connected_selected_number = self.selected_profile_number
@@ -1287,7 +1303,8 @@ class MainGUI:
 
         elif "New Gost" in event:
             page_data = GostGUI(None).start_window()
-            self.paste_v2ray(page_data)
+            if page_data:
+                self.paste_v2ray(page_data)
 
     def restart(self):
         python = sys.executable

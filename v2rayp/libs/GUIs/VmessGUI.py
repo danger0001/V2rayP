@@ -1,5 +1,7 @@
 import PySimpleGUI as psg
+import sys
 
+sys.path.append("v2rayp")
 psg.set_options(font=("Arial Bold", 11))
 page_data = dict()
 page_data["remark"] = ""
