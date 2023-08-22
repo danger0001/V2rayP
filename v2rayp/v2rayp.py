@@ -27,6 +27,7 @@ from libs.SaveGUIConfigPage import SaveGUIConfigPage
 from libs.Subscriptions import Subscriptions
 from libs.V2RayURL2Config import generateConfig
 
+
 # sys.path.append("v2rayp")
 
 
