@@ -1,15 +1,5 @@
-import io
-import json
-import os
-import subprocess
-import sys
-import threading
-import time
-import uuid
+import io, json, os, subprocess, sys, threading, time, uuid, psutil, pyperclip
 from contextlib import redirect_stdout
-
-import psutil
-import pyperclip
 import PySimpleGUI as psg
 from __version__ import __version__
 from libs.ConnectGost import ConnectGost
