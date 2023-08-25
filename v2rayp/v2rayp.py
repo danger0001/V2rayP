@@ -1262,17 +1262,20 @@ class MainGUI:
             ###################################
             elif event == "shortcut":
                 if inside_windows():
-                    path = (
-                        os.popen(r"echo %userprofile%\\desktop\\v2rayp.cmd")
-                        .read()
-                        .strip()
-                    )
+                    exec = sys.executable.replace("python.exe", "pythonw.exe")
+                    cmd = f'{current_dir}\\libs\\shortcut /t:{exec} /p:"-m v2rayp" /f:"%USERPROFILE%\\Desktop\\v2ray.lnk" /a:c  /I:{current_dir}\\assets\\icons\\appicon.ico'
+                    os.popen(cmd)
+                    # path = (
+                    #     os.popen(r"echo %userprofile%\\desktop\\v2rayp.cmd")
+                    #     .read()
+                    #     .strip()
+                    # )
 
-                    exec = sys.executable.replace("python.exe", "pythonw.exe").replace(
-                        "python3.exe", "pythonw.exe"
-                    )
-                    with open(path, "w") as file:
-                        file.write(f"start /min {exec} -m v2rayp")
+                    # exec = sys.executable.replace("python.exe", "pythonw.exe").replace(
+                    #     "python3.exe", "pythonw.exe"
+                    # )
+                    # with open(path, "w") as file:
+                    #     file.write(f"start /min {exec} -m v2rayp")
                 else:
                     userhome = os.path.expanduser("~")
                     path = userhome + "/Desktop"
