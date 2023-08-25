@@ -1,5 +1,15 @@
-import io, json, os, subprocess, sys, threading, time, uuid, psutil, pyperclip
+import io
+import json
+import os
+import subprocess
+import sys
+import threading
+import time
+import uuid
 from contextlib import redirect_stdout
+
+import psutil
+import pyperclip
 import PySimpleGUI as psg
 from __version__ import __version__
 from libs.ConnectGost import ConnectGost
@@ -26,7 +36,6 @@ from libs.RefereshTableContent import RefereshTableContent
 from libs.SaveGUIConfigPage import SaveGUIConfigPage
 from libs.Subscriptions import Subscriptions
 from libs.V2RayURL2Config import generateConfig
-
 
 # sys.path.append("v2rayp")
 
@@ -995,7 +1004,10 @@ class MainGUI:
             pyperclip.copy(self.v2ray_to_url(sel))
 
         def paste(temp):
-            self.paste_v2ray()
+            try:
+                self.paste_v2ray()
+            except:
+                pass
 
         self.root_of_windows.bind("<Control-c>", copy)
         self.root_of_windows.bind("<Control-v>", paste)
@@ -1156,7 +1168,10 @@ class MainGUI:
 
             ######################
             elif "From Clipboard" in event:
-                self.paste_v2ray()
+                try:
+                    self.paste_v2ray()
+                except:
+                    pass
             elif event == "delete":
                 self.delete()
             elif "To Clipboard" in event:
