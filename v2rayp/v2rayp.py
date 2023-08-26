@@ -493,7 +493,7 @@ class MainGUI:
             print("connection checking...")
 
             self.isConnected = NetTools.is_connected_to_internet(
-                "https://www.yahoo.com", int(self.local_port)
+                "http://1.1.1.1/", int(self.local_port)
             )
             if inside_windows():
                 if self.isConnected and inside_windows:

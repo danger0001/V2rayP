@@ -3,7 +3,6 @@ README.md
 setup.cfg
 setup.py
 v2rayp/.gitignore
-v2rayp/Instruction_offline_packages.txt
 v2rayp/__init__.py
 v2rayp/__main__.py
 v2rayp/__version__.py
@@ -54,6 +53,7 @@ v2rayp/libs/QRCode.py
 v2rayp/libs/RefereshEditPage.py
 v2rayp/libs/RefereshTableContent.py
 v2rayp/libs/SaveGUIConfigPage.py
+v2rayp/libs/Shortcut.exe
 v2rayp/libs/SubscriptionGUI.py
 v2rayp/libs/Subscriptions.py
 v2rayp/libs/Trojan2Link.py
