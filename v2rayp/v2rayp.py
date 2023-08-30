@@ -1,3 +1,4 @@
+import base64
 import io
 import json
 import os
@@ -22,13 +23,7 @@ from libs.GUIs.SettingGUI import SettingGUI
 from libs.GUIs.TrojanGUI import TrojanGUI
 from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
-from libs.in_win import (
-    FactorySetting,
-    config_path,
-    download_xray_gost,
-    inside_windows,
-    pass_by_ref,
-)
+from libs.in_win import FactorySetting, config_path, download_xray_gost, inside_windows, pass_by_ref
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
 from libs.RefereshEditPage import RefereshEditPage
@@ -545,7 +540,7 @@ class MainGUI:
             int(self.settings["segmentation_timeout"]),
         )
 
-    def v2ray_to_url(self, sel):
+    def config2url(self, sel):
         filename = str(self.rows_dict[sel]["remark"])
         protocol = str(self.rows_dict[sel]["protocol"])
 
@@ -557,16 +552,33 @@ class MainGUI:
             group_path = ""
         ################
         pname = filename.replace(".json", "")
-        path = f"{config_path()}\\v2ray_profiles{group_path}\\{filename}"
-        if not inside_windows():
-            path = path.replace("\\", "/")
+
         if protocol in ("vless", "vmess", "trojan"):
+            path = f"{config_path()}\\v2ray_profiles{group_path}\\{filename}"
+            if not inside_windows():
+                path = path.replace("\\", "/")
             v2ray_text = ExportURLfromConfig(
                 path,
                 pname,
             ).share_link()
 
             return v2ray_text
+        else:
+            path = f"{config_path()}\\gost_profiles{group_path}\\{filename}"
+            if not inside_windows():
+                path = path.replace("\\", "/")
+            file = open(path, "r")
+
+            # Read the entire contents of the file
+            file_contents = file.read()
+
+            # Close the file
+            file.close()
+
+            # Print the contents of the file
+            bytes_text = file_contents.encode("utf-8")
+            base64_text = f"gost://{base64.b64encode(bytes_text).decode('utf-8')}"
+            return base64_text
 
     def delete(self):
         try:
@@ -693,9 +705,12 @@ class MainGUI:
         cmd = cmd.replace("/", "\\")
         os.popen(cmd)
 
-    def paste_v2ray(self, url=None):
+    def paste_uri(self, url=None):
         if url == None:
             url = pyperclip.paste()
+
+        print("this is url", url)
+
         if ("trojan" in url) or ("vless" in url) or ("vmess" in url):
             config_json = json.loads(generateConfig(url))
             profileName = config_json["_comment"]["remark"]
@@ -717,8 +732,16 @@ class MainGUI:
 
         else:
             path = f"{config_path()}\\gost_profiles\\"
-            config_json = url
-            profileName = f'{url["remote_protocol"]}_{url["remote_port"]}'
+            content64 = url.replace("gost://", "")
+            content = str(base64.b64decode(content64).decode("utf-8"))
+            print("this is content", content)
+
+            config_json = json.loads(content)
+            print("this is url", config_json)
+            profileName = (
+                f'{config_json["remote_protocol"]}_{config_json["remote_port"]}'
+            )
+            print("This is profile name:", profileName)
             if not inside_windows():
                 path = path.replace("\\", "/")
             try:
@@ -1001,13 +1024,13 @@ class MainGUI:
 
         def copy(temp):
             sel = self.selected_profile_number
-            pyperclip.copy(self.v2ray_to_url(sel))
+            pyperclip.copy(self.config2url(sel))
 
         def paste(temp):
             try:
-                self.paste_v2ray()
-            except:
-                pass
+                self.paste_uri()
+            except Exception as e:
+                print("Err occurd: ", str(e))
 
         self.root_of_windows.bind("<Control-c>", copy)
         self.root_of_windows.bind("<Control-v>", paste)
@@ -1169,13 +1192,13 @@ class MainGUI:
             ######################
             elif "From Clipboard" in event:
                 try:
-                    self.paste_v2ray()
+                    self.paste_uri()
                 except:
                     pass
             elif event == "delete":
                 self.delete()
             elif "To Clipboard" in event:
-                pyperclip.copy(self.v2ray_to_url(sel))
+                pyperclip.copy(self.config2url(sel))
             #######################
             elif event in ("hide", "Hide"):
                 self.Hide_Show_Notification()
@@ -1209,7 +1232,7 @@ class MainGUI:
 
             ###################################
             elif event == "To QR Code":
-                QRCode(self.v2ray_to_url(sel))
+                QRCode(self.config2url(sel))
             #################################
             elif event == "update_subscription":
                 if Subscriptions(values["subscription"]).make_subscription():
@@ -1299,26 +1322,26 @@ class MainGUI:
             if page_data:
                 page_data["protocol"] = "vless"
                 url = ExportURLfromConfig.construc_simple_link_from_edit_page(page_data)
-                self.paste_v2ray(url)
+                self.paste_uri(url)
 
         elif "New Vmess" in event:
             page_data = VmessGUI().start_window()
             if page_data:
                 page_data["protocol"] = "vmess"
                 url = ExportURLfromConfig.construc_simple_link_from_edit_page(page_data)
-                self.paste_v2ray(url)
+                self.paste_uri(url)
 
         elif "New Trojan" in event:
             page_data = TrojanGUI().start_window()
             if page_data:
                 page_data["protocol"] = "trojan"
                 url = ExportURLfromConfig.construc_simple_link_from_edit_page(page_data)
-                self.paste_v2ray(url)
+                self.paste_uri(url)
 
         elif "New Gost" in event:
             page_data = GostGUI(None).start_window()
             if page_data:
-                self.paste_v2ray(page_data)
+                self.paste_uri(page_data)
 
     def restart(self):
         python = sys.executable

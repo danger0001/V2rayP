@@ -3,7 +3,10 @@ import base64
 import json
 import os
 import re
+import sys
 from urllib.parse import parse_qs, unquote, urlparse
+
+sys.path.append("v2rayp")
 
 from libs.GenerateRandomName import generate_random_alphanumeric
 
@@ -1449,4 +1452,4 @@ if __name__ == "__main__":
     # option = parser.parse_args()
     config = r"trojan://LjWyuE2d8M@hels.ddns.net:44838?security=reality&sni=yahoo.com&fp=firefox&pbk=8LIuGGsdhR59qjyRALAmGKNuKVlyH3t8OqJmRRdyKl4&sid=92cd56b1&spx=%2F&type=grpc"
     jssss, name = generate_config_with_name(config)
-    print(name)
+    print(jssss)
