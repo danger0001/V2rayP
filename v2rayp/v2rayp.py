@@ -1237,7 +1237,7 @@ class MainGUI:
                     )
 
             elif event == "delete_subscription":
-                Subscriptions().delete_previous_folder()
+                Subscriptions().delete_subscription_folder()
                 _, rows = self.referesh_table_content()
                 try:
                     self.window["-TABLE-"].update(

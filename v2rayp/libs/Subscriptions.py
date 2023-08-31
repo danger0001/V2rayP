@@ -92,7 +92,7 @@ class Subscriptions:
 
     def make_folder_ready(self, subscription_name):
         ################################temporary remove all subscriptions
-        self.delete_previous_folder()
+        self.delete_subscription_folder()
         ################################
         path = f"{config_path()}\\v2ray_profiles\\subscriptions\\{subscription_name}"
         cmd = f"rmdir /s /q {path}"
@@ -107,8 +107,15 @@ class Subscriptions:
             cmd = f"mkdir -p {path}"
         os.popen(cmd).read()
 
-    def delete_previous_folder(self):
+    def delete_subscription_folder(self):
         path = f"{config_path()}\\v2ray_profiles\\subscriptions\\"
+        cmd = f"rmdir /s /q {path}"
+        if not inside_windows():
+            path = path.replace("\\", "/")
+            cmd = f"rm -rf {path}"
+        os.popen(cmd).read()
+
+        path = f"{config_path()}\\gost_profiles\\subscriptions\\"
         cmd = f"rmdir /s /q {path}"
         if not inside_windows():
             path = path.replace("\\", "/")
