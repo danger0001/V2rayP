@@ -41,22 +41,6 @@ class RefereshTableContent:
     def extract_all_rows(self):
         rows = []
         ###############################
-        i = 0
-        for json_config in self.json_v2ray_configs:
-            row = self._extract_row_from_config_v2ray(json_config)
-            row["remark"] = self.list_of_v2ray_configs[i]
-            row["group"] = ""
-            rows.append(row)
-            i += 1
-        ###########################################
-        i = 0
-        for json_config in self.json_gost_configs:
-            row = self._extract_row_from_config_gost(json_config)
-            row["remark"] = self.list_of_gost_configs[i]
-            row["group"] = ""
-            rows.append(row)
-            i += 1
-        #############################
         for subscription_name in self.v2ray_subscriptions:
             i = 0
             for json_config in self.json_v2ray_subscription_configs:
@@ -79,6 +63,23 @@ class RefereshTableContent:
                 rows.append(row)
                 i += 1
         ####################################
+        i = 0
+        for json_config in self.json_v2ray_configs:
+            row = self._extract_row_from_config_v2ray(json_config)
+            row["remark"] = self.list_of_v2ray_configs[i]
+            row["group"] = ""
+            rows.append(row)
+            i += 1
+        ###########################################
+        i = 0
+        for json_config in self.json_gost_configs:
+            row = self._extract_row_from_config_gost(json_config)
+            row["remark"] = self.list_of_gost_configs[i]
+            row["group"] = ""
+            rows.append(row)
+            i += 1
+        #############################
+
         return rows
 
     def _extract_row_from_config_gost(self, data: json):
