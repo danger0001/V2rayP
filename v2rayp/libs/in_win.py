@@ -62,24 +62,28 @@ tmp = temp()
 def download_xray_gost(window, enable_download: pass_by_ref, filename):
     if filename == "xray":
         if platform.system() == "Windows":
-            url = "https://github.com/iblockchaincyberchain/V2rayP/raw/main/bin/win/v2ray/xray.exe"
+            url = "https://github.com/iblockchaincyberchain/v2rayp_bin/raw/main/win/xray.exe"
             filename = "xray.exe"
 
         elif platform.system() == "Linux":
-            url = "https://github.com/iblockchaincyberchain/V2rayP/raw/main/bin/linux/v2ray/xray"
+            url = "https://github.com/iblockchaincyberchain/v2rayp_bin/raw/main/linux/xray"
 
         elif platform.system() == "Darwin":
-            url = "https://github.com/iblockchaincyberchain/V2rayP/raw/main/bin/mac/v2ray/xray"
+            url = (
+                "https://github.com/iblockchaincyberchain/v2rayp_bin/raw/main/mac/xray"
+            )
     elif filename == "gost":
         if platform.system() == "Windows":
-            url = "https://github.com/iblockchaincyberchain/V2rayP/raw/main/bin/win/gost/gost.exe"
+            url = "https://github.com/iblockchaincyberchain/v2rayp_bin/raw/main/win/gost.exe"
             filename = "gost.exe"
 
         elif platform.system() == "Linux":
-            url = "https://github.com/iblockchaincyberchain/V2rayP/raw/main/bin/linux/gost/gost"
+            url = "https://github.com/iblockchaincyberchain/v2rayp_bin/raw/main/linux/gost"
 
         elif platform.system() == "Darwin":
-            url = "https://github.com/iblockchaincyberchain/V2rayP/raw/main/bin/mac/gost/gost"
+            url = (
+                "https://github.com/iblockchaincyberchain/v2rayp_bin/raw/main/mac/gost"
+            )
 
     download_binary(url, filename, window, enable_download)
 
