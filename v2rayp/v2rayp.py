@@ -23,7 +23,13 @@ from libs.GUIs.SettingGUI import SettingGUI
 from libs.GUIs.TrojanGUI import TrojanGUI
 from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
-from libs.in_win import FactorySetting, config_path, download_xray_gost, inside_windows, pass_by_ref
+from libs.in_win import (
+    FactorySetting,
+    config_path,
+    download_xray_gost,
+    inside_windows,
+    pass_by_ref,
+)
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
 from libs.RefereshEditPage import RefereshEditPage
@@ -79,6 +85,14 @@ class MainGUI:
         self.referesh_terminal_period = 0.5
         self.thrd_check_connection = None
         threading.Thread(target=self._update_debug, daemon=True).start()
+
+    def cpulimit(self):
+        # Get the current process ID
+        pid = psutil.Process().pid
+        # Set the process priority class to "below normal"
+        psutil.Process(pid).nice(psutil.BELOW_NORMAL_PRIORITY_CLASS)
+        # Set the CPU affinity mask for the process
+        psutil.Process(pid).cpu_affinity([0])
 
     @staticmethod
     def copy_config_folder():
@@ -1154,6 +1168,8 @@ class MainGUI:
                     "<Double-Button-1>", "-double-"
                 )  # double click event in table
                 self.firstTime = False
+                self.cpulimit()
+
             #################
             if inside_windows():
                 if event == self.tray.key:
