@@ -1428,7 +1428,7 @@ def generateConfig(config: str, dns_list=["8.8.8.8"]):
         return json.dumps(res)
 
 
-def generate_config_with_name(response):
+def generate_v2rayconfig_with_name(response):
     json_out = json.loads(generateConfig(response))
     name = json_out["_comment"]["remark"]
     if not name:
@@ -1451,5 +1451,5 @@ if __name__ == "__main__":
 
     # option = parser.parse_args()
     config = r"trojan://LjWyuE2d8M@hels.ddns.net:44838?security=reality&sni=yahoo.com&fp=firefox&pbk=8LIuGGsdhR59qjyRALAmGKNuKVlyH3t8OqJmRRdyKl4&sid=92cd56b1&spx=%2F&type=grpc"
-    jssss, name = generate_config_with_name(config)
+    jssss, name = generate_v2rayconfig_with_name(config)
     print(jssss)

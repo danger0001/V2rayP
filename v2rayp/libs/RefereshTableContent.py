@@ -10,23 +10,38 @@ class RefereshTableContent:
         self.json_v2ray_configs = self._referesh_v2ray_folder()
         self.json_gost_configs = self._referesh_gost_folder()
         ##############################
-        self.subscriptions = []
+        self.v2ray_subscriptions = []
         if inside_windows():
             cmd = f"dir /b /ad {config_path()}\\v2ray_profiles\\subscriptions"
-            self.subscriptions = os.popen(cmd).read().strip().split("\n")
+            self.v2ray_subscriptions = os.popen(cmd).read().strip().split("\n")
         else:
             cmd = f"cd {config_path()}/v2ray_profiles/subscriptions;ls -d */"
-            self.subscriptions = os.popen(cmd).read().strip().replace("/", "").split()
-        print(self.subscriptions)
-        for subscription_name in self.subscriptions:
+            self.v2ray_subscriptions = (
+                os.popen(cmd).read().strip().replace("/", "").split()
+            )
+        for subscription_name in self.v2ray_subscriptions:
             self.json_v2ray_subscription_configs = (
                 self._referesh_v2ray_subscription_folder(subscription_name)
+            )
+        #######################################
+        self.gost_subscriptions = []
+        if inside_windows():
+            cmd = f"dir /b /ad {config_path()}\\gost_profiles\\subscriptions"
+            self.gost_subscriptions = os.popen(cmd).read().strip().split("\n")
+        else:
+            cmd = f"cd {config_path()}/gost_profiles/subscriptions;ls -d */"
+            self.gost_subscriptions = (
+                os.popen(cmd).read().strip().replace("/", "").split()
+            )
+        for subscription_name in self.gost_subscriptions:
+            self.json_gost_subscription_configs = (
+                self._referesh_gost_subscription_folder(subscription_name)
             )
 
     def extract_all_rows(self):
         rows = []
+        ###############################
         i = 0
-
         for json_config in self.json_v2ray_configs:
             row = self._extract_row_from_config_v2ray(json_config)
             row["remark"] = self.list_of_v2ray_configs[i]
@@ -34,7 +49,15 @@ class RefereshTableContent:
             rows.append(row)
             i += 1
         ###########################################
-        for subscription_name in self.subscriptions:
+        i = 0
+        for json_config in self.json_gost_configs:
+            row = self._extract_row_from_config_gost(json_config)
+            row["remark"] = self.list_of_gost_configs[i]
+            row["group"] = ""
+            rows.append(row)
+            i += 1
+        #############################
+        for subscription_name in self.v2ray_subscriptions:
             i = 0
             for json_config in self.json_v2ray_subscription_configs:
                 # try:
@@ -47,14 +70,15 @@ class RefereshTableContent:
                 rows.append(row)
                 i += 1
         ####################################
-        i = 0
-        for json_config in self.json_gost_configs:
-            row = self._extract_row_from_config_gost(json_config)
-            row["remark"] = self.list_of_gost_configs[i]
-            row["group"] = ""
-            rows.append(row)
-            i += 1
-
+        for subscription_name in self.gost_subscriptions:
+            i = 0
+            for json_config in self.json_gost_subscription_configs:
+                row = self._extract_row_from_config_gost(json_config)
+                row["remark"] = self.list_of_gost_subscription_configs[i]
+                row["group"] = subscription_name
+                rows.append(row)
+                i += 1
+        ####################################
         return rows
 
     def _extract_row_from_config_gost(self, data: json):
@@ -133,6 +157,27 @@ class RefereshTableContent:
         json_configs = []
         for config in list_of_configs:
             path = f"{config_path()}\\v2ray_profiles\\subscriptions\\{subscription_name}\\{config}"
+            if not inside_windows:
+                path = path.replace("\\", "/")
+            temp = self._read_content_of_config_file(path)
+            json_configs.append(temp)
+        return json_configs
+
+    def _referesh_gost_subscription_folder(self, subscription_name):
+        list_of_configs = (
+            os.popen(
+                f"dir {config_path()}\\gost_profiles\\subscriptions\\{subscription_name} /a-d /B"
+                if inside_windows()
+                else f"ls -p  {config_path()}/gost_profiles/subscriptions/{subscription_name} | grep -v /"
+            )
+            .read()
+            .split("\n")
+        )
+        list_of_configs = [x for x in list_of_configs if x]
+        self.list_of_gost_subscription_configs = list_of_configs
+        json_configs = []
+        for config in list_of_configs:
+            path = f"{config_path()}\\gost_profiles\\subscriptions\\{subscription_name}\\{config}"
             if not inside_windows:
                 path = path.replace("\\", "/")
             temp = self._read_content_of_config_file(path)

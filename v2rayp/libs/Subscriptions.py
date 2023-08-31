@@ -1,13 +1,13 @@
 # import parsel
 
+import base64
 import json
 import os
 from urllib.parse import urlparse
 
 import requests
-
 from libs.in_win import config_path, inside_windows
-from libs.V2RayURL2Config import generate_config_with_name
+from libs.V2RayURL2Config import generate_v2rayconfig_with_name
 
 
 class Subscriptions:
@@ -31,7 +31,7 @@ class Subscriptions:
 
         return name
 
-    def put_subscription_in_folder(
+    def put_v2ray_subscription_in_folder(
         self, subscription_name: str, config_name: str, json_config: json
     ):
         path = f"{config_path()}\\v2ray_profiles\\subscriptions\\{subscription_name}"
@@ -40,7 +40,22 @@ class Subscriptions:
         if not inside_windows():
             file_path = file_path.replace("\\", "/")
         with open(file_path, "w") as file:
-            # print(file_path)
+            json.dump(json_config, file, indent=2)
+
+    def put_gost_subscription_in_folder(
+        self, subscription_name: str, config_name: str, json_config: json
+    ):
+        path = f"{config_path()}\\gost_profiles\\subscriptions\\{subscription_name}"
+
+        try:
+            os.makedirs(path)
+        except Exception as e:
+            print("Err occured 744: ", str(e))
+
+        file_path = f"{path}\\{config_name}.json"
+        if not inside_windows():
+            file_path = file_path.replace("\\", "/")
+        with open(file_path, "w") as file:
             json.dump(json_config, file, indent=2)
 
     def make_subscription(self):
@@ -58,11 +73,19 @@ class Subscriptions:
 
         for response in responses:
             try:
-                json_out, name = generate_config_with_name(response)
-                # print("name:", name)
-                # print("config:", json_out)
-                # print("************")
-                self.put_subscription_in_folder(subscription_name, name, json_out)
+                if "gost://" not in response:
+                    json_out, name = generate_v2rayconfig_with_name(response)
+                    self.put_v2ray_subscription_in_folder(
+                        subscription_name, name, json_out
+                    )
+                else:
+                    content64 = response.replace("gost://", "")
+                    content = str(base64.b64decode(content64).decode("utf-8"))
+                    json_out = json.loads(content)
+                    name = f'{json_out["remote_protocol"]}_{json_out["remote_port"]}'
+                    self.put_gost_subscription_in_folder(
+                        subscription_name, name, json_out
+                    )
             except Exception as e:
                 print(e)
         return True

@@ -419,25 +419,7 @@ class MainGUI:
 
         rows = []
 
-        # self.rows_dict = RefereshTableContent().referesh_v2ray_subscription_folder(
-        #     subscription_name
-        # )
-
-        # for row_dict in self.rows_dict:
-        #     row = [
-        #         row_dict["protocol"],
-        #         row_dict["remark"],
-        #         row_dict["server_address"],
-        #         row_dict["port"],
-        #         row_dict["user_security"],
-        #         row_dict["network"],
-        #         row_dict["security"],
-        #         subscription_name,
-        #         "",
-        #     ]
-        #     rows.append(row)
-
-        self.rows_dict = (RefereshTableContent()).extract_all_rows()
+        self.rows_dict = RefereshTableContent().extract_all_rows()
         # rows = []
         for row_dict in self.rows_dict:
             row = [
@@ -618,9 +600,9 @@ class MainGUI:
             os.popen(cmd).read()
         else:
             os.popen(
-                f'del "{config_path()}\\gost_profiles\\{filename}"'
+                f'del "{config_path()}\\gost_profiles{group_path}\\{filename}"'
                 if inside_windows()
-                else f'rm "{config_path()}/gost_profiles/{filename}"'
+                else f'rm "{config_path()}/gost_profiles{group_path}/{filename}"'
             ).read()
         _, rows = self.referesh_table_content()
         self.window["-TABLE-"].update(rows)
@@ -748,10 +730,7 @@ class MainGUI:
             path = f"{config_path()}\\gost_profiles\\"
             content64 = url.replace("gost://", "")
             content = str(base64.b64decode(content64).decode("utf-8"))
-            print("this is content", content)
-
             config_json = json.loads(content)
-            print("this is url", config_json)
             profileName = (
                 f'{config_json["remote_protocol"]}_{config_json["remote_port"]}'
             )
