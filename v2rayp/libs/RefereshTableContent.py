@@ -5,15 +5,15 @@ import time
 from libs.in_win import config_path, inside_windows
 
 # Set the encoding explicitly to UTF-8
-if os.name == "nt":  # For Windows
-    import sys
+# if os.name == "nt":  # For Windows
+#     import sys
 
-    sys.stdin.reconfigure(encoding="utf-8")
-    sys.stdout.reconfigure(encoding="utf-8")
-else:  # For Unix/Linux
-    import locale
+#     sys.stdin.reconfigure(encoding="utf-8")
+#     sys.stdout.reconfigure(encoding="utf-8")
+# else:  # For Unix/Linux
+#     import locale
 
-    locale.setlocale(locale.LC_ALL, "en_US.utf-8")
+#     locale.setlocale(locale.LC_ALL, "en_US.utf-8")
 
 
 class RefereshTableContent:

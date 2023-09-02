@@ -23,13 +23,7 @@ from libs.GUIs.SettingGUI import SettingGUI
 from libs.GUIs.TrojanGUI import TrojanGUI
 from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
-from libs.in_win import (
-    FactorySetting,
-    config_path,
-    download_xray_gost,
-    inside_windows,
-    pass_by_ref,
-)
+from libs.in_win import FactorySetting, config_path, download_xray_gost, inside_windows, pass_by_ref
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
 from libs.RefereshEditPage import RefereshEditPage
@@ -1281,6 +1275,10 @@ class MainGUI:
             elif event == "shortcut":
                 if inside_windows():
                     exec = sys.executable.replace("python.exe", "pythonw.exe")
+                    exec = exec.replace("python3.exe", "pythonw.exe")
+
+                    # pythonw_path = os.path.splitext(sys.executable)[0] + "w"
+
                     cmd = f'{current_dir}\\libs\\shortcut /t:{exec} /p:"-m v2rayp" /f:"%USERPROFILE%\\Desktop\\v2ray.lnk" /a:c  /I:{current_dir}\\assets\\icons\\appicon.ico'
                     os.popen(cmd)
                     # path = (
