@@ -76,7 +76,7 @@ class MainGUI:
         self.settings: dict = None
         self.isHide = False
         self.show = True
-        self.referesh_terminal_period = 0.5
+        self.referesh_terminal_period = 1
         self.thrd_check_connection = None
         threading.Thread(target=self._update_debug, daemon=True).start()
 
@@ -226,17 +226,23 @@ class MainGUI:
         with io.StringIO() as buffer, redirect_stdout(buffer):
             while True:
                 time.sleep(self.referesh_terminal_period)
-                output = buffer.getvalue()
-                # if len(output) > 10:
-                #     buffer.flush()
-                if len(output[-self.debug_size :]) > len(
-                    self.mline_text[-self.debug_size :]
-                ):
-                    self.mline_text = output[-self.debug_size :]
-                    try:
-                        self.window["debug_box"].update(value=self.mline_text)
-                    except:
-                        pass
+
+                # if len(output) >= self.debug_size:
+                # Flush the content
+                content = buffer.getvalue()[
+                    -self.debug_size :
+                ]  # Get the current content and remove the last 1024 characters
+                buffer.seek(0)  # Move the pointer to the beginning of the stream
+                buffer.truncate(0)  # Clear the current content
+                buffer.write(content)  # Write the modified content back to the object
+
+                # output = buffer.getvalue()
+                # if len(output) > len(self.mline_text):
+                # self.mline_text = output  # [-self.debug_size :]
+                try:
+                    self.window["debug_box"].update(value=content)
+                except Exception as e:
+                    print("Error in terminal 731: ", str(e))
 
     def _getLayout(self) -> list:
         return self.layout
@@ -706,6 +712,20 @@ class MainGUI:
         cmd = cmd.replace("/", "\\")
         os.popen(cmd)
 
+    def get_numbered_filename(self, filename):
+        if not os.path.isfile(filename):
+            return filename
+
+        base_name, extension = os.path.splitext(filename)
+        counter = 1
+        new_filename = f"{base_name}_{counter}{extension}"
+
+        while os.path.isfile(new_filename):
+            counter += 1
+            new_filename = f"{base_name}_{counter}{extension}"
+
+        return new_filename
+
     def paste_uri(self, url=None):
         if url == None:
             url = pyperclip.paste()
@@ -725,8 +745,10 @@ class MainGUI:
                 os.mkdir(path)
             except:
                 pass
+            file_name = f"{path}{profileName}.json"
+            file_name = self.get_numbered_filename(file_name)
             with open(
-                f"{path}{profileName}.json",
+                file_name,
                 "w",
             ) as f:
                 json.dump(config_json, f)
@@ -746,8 +768,12 @@ class MainGUI:
                 os.mkdir(path)
             except:
                 pass
+            
+            
+            file_name = f"{path}{profileName}.json"
+            file_name = self.get_numbered_filename(file_name)
             with open(
-                f"{path}{profileName}.json",
+                file_name,
                 "w",
             ) as f:
                 json.dump(config_json, f)
@@ -1113,7 +1139,6 @@ class MainGUI:
                     run = p.poll() is None
 
                     if run == False:
-                        
                         break
 
             threading.Thread(target=get_process_status).start()
