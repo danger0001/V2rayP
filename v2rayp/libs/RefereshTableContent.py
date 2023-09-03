@@ -28,6 +28,8 @@ class RefereshTableContent:
         else:
             path = f"{config_path()}/v2ray_profiles/subscriptions"
 
+        self.check_folder_if_not_make(path)
+
         self.v2ray_subscriptions = [
             file for file in os.listdir(path) if os.path.isdir(os.path.join(path, file))
         ]
@@ -60,7 +62,7 @@ class RefereshTableContent:
             path = f"{config_path()}\\gost_profiles\\subscriptions"
         else:
             path = f"{config_path()}/gost_profiles/subscriptions"
-
+        self.check_folder_if_not_make(path)
         self.gost_subscriptions = [
             file for file in os.listdir(path) if os.path.isdir(os.path.join(path, file))
         ]
@@ -167,11 +169,12 @@ class RefereshTableContent:
         #     .split("\n")
         # )
         # list_of_configs = [x for x in list_of_configs if x]
-
         if inside_windows():
             path = f"{config_path()}\\v2ray_profiles"
         else:
             path = f"{config_path()}/v2ray_profiles"
+
+        self.check_folder_if_not_make(path)
 
         list_of_configs = [
             file
@@ -188,6 +191,13 @@ class RefereshTableContent:
 
             json_configs.append(self._read_content_of_config_file(path))
         return json_configs
+
+    def check_folder_if_not_make(self, path):
+        if not os.path.exists(path):
+            os.makedirs(path)
+            print("Folder created successfully.")
+        else:
+            print("Folder already exists.")
 
     def _referesh_v2ray_subscription_folder(self, subscription_name):
         # list_of_configs = (
@@ -270,6 +280,7 @@ class RefereshTableContent:
         else:
             path = f"{config_path()}/gost_profiles"
 
+        self.check_folder_if_not_make(path)
         list_of_configs = [
             file
             for file in os.listdir(path)

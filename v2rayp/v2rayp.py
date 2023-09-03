@@ -23,7 +23,13 @@ from libs.GUIs.SettingGUI import SettingGUI
 from libs.GUIs.TrojanGUI import TrojanGUI
 from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
-from libs.in_win import FactorySetting, config_path, download_xray_gost, inside_windows, pass_by_ref
+from libs.in_win import (
+    FactorySetting,
+    config_path,
+    download_xray_gost,
+    inside_windows,
+    pass_by_ref,
+)
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
 from libs.RefereshEditPage import RefereshEditPage
@@ -768,8 +774,7 @@ class MainGUI:
                 os.mkdir(path)
             except:
                 pass
-            
-            
+
             file_name = f"{path}{profileName}.json"
             file_name = self.get_numbered_filename(file_name)
             with open(
@@ -852,7 +857,11 @@ class MainGUI:
             self.connectv2ray = ConnectV2Ray(config_file_path, self.local_port)
             self.connectv2ray.connect()
         else:  # using gost
-            config_file_path = f"{config_path()}\\gost_profiles\\{filename}"
+            if len(group) >= 1:
+                group_path = f"\\subscriptions\\{group}"
+            else:
+                group_path = ""
+            config_file_path = f"{config_path()}\\gost_profiles{group_path}\\{filename}"
             if not inside_windows():
                 config_file_path = config_file_path.replace("\\", "/")
             if use_fragmentation:
