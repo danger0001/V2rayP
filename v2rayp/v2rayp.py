@@ -47,7 +47,7 @@ if inside_windows():
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 os.chdir(current_dir)
-width = 1000
+width = 1100
 
 
 psg.theme("DarkGrey5")
@@ -215,15 +215,24 @@ class MainGUI:
             # Load the JSON data from the file
             self.gui_data = json.load(json_file)
 
+    # def maintain_last_1024_chars(string, size=1024):
+    #     if len(string) <= size:
+    #         return string
+    #     else:
+    #         return string[-size:]
+
     def _update_debug(self):
+        self.debug_size = 2048
         with io.StringIO() as buffer, redirect_stdout(buffer):
             while True:
                 time.sleep(self.referesh_terminal_period)
                 output = buffer.getvalue()
-                if len(output) > 10:
-                    buffer.flush()
-                if len(output) > len(self.mline_text):
-                    self.mline_text = output
+                # if len(output) > 10:
+                #     buffer.flush()
+                if len(output[-self.debug_size :]) > len(
+                    self.mline_text[-self.debug_size :]
+                ):
+                    self.mline_text = output[-self.debug_size :]
                     try:
                         self.window["debug_box"].update(value=self.mline_text)
                     except:
@@ -366,8 +375,10 @@ class MainGUI:
         ]
 
         control = [
-            psg.Button("HidetoTray", key="hide") if inside_windows() else psg.Text(""),
+            psg.Button("HideToTray", key="hide") if inside_windows() else psg.Text(""),
             psg.Button("Referesh", key="referesh"),
+            psg.Button("Copy", key="copy"),
+            psg.Button("Paste", key="paste"),
         ]
 
         ret = [
@@ -1019,8 +1030,8 @@ class MainGUI:
             except Exception as e:
                 print("Err occurd: ", str(e))
 
-        self.root_of_windows.bind("<Control-c>", copy)
-        self.root_of_windows.bind("<Control-v>", paste)
+        # self.root_of_windows.bind("<Control-c>", copy)
+        # self.root_of_windows.bind("<Control-v>", paste)
 
         if self.settings["close_to_tray"]:
             self.root_of_windows.protocol(
@@ -1080,8 +1091,9 @@ class MainGUI:
 
             window = psg.Window(
                 "Upgradig...",
-                [[psg.MLine(key="debug2", size=(40, 40))]],
+                [[psg.MLine(key="debug2", size=(20, 20))]],
                 finalize=True,
+                font=("", 9),
                 keep_on_top=True,
             )
             window["debug2"].update("Upgrading...")
@@ -1101,6 +1113,7 @@ class MainGUI:
                     run = p.poll() is None
 
                     if run == False:
+                        
                         break
 
             threading.Thread(target=get_process_status).start()
@@ -1113,6 +1126,8 @@ class MainGUI:
                     lines += line
                     window["debug2"].update(lines)
                     time.sleep(0.1)
+                window["debug2"].update("Finished!")
+                time.sleep(1)
                 window.close()
 
             threading.Thread(target=update_inside).start()
@@ -1179,15 +1194,19 @@ class MainGUI:
                 self.edit_profile_page(sel)
 
             ######################
-            elif "From Clipboard" in event:
+            elif ("From Clipboard" in event) or ("paste" in event):
                 try:
                     self.paste_uri()
-                except:
-                    pass
+                except Exception as e:
+                    print("Problem in paste: ", str(e))
             elif event == "delete":
                 self.delete()
-            elif "To Clipboard" in event:
-                pyperclip.copy(self.config2url(sel))
+            elif ("To Clipboard" in event) or ("copy" in event):
+                try:
+                    pyperclip.copy(self.config2url(sel))
+                except Exception as e:
+                    print("Problem in copy: ", str(e))
+
             #######################
             elif event in ("hide", "Hide"):
                 self.Hide_Show_Notification()
