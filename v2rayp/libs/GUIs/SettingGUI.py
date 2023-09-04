@@ -1,5 +1,6 @@
-import PySimpleGUI as psg
 import sys
+
+import PySimpleGUI as psg
 
 sys.path.append("v2rayp")
 from libs.in_win import FactorySetting
@@ -16,6 +17,7 @@ page_data["cloudflare_address"] = "bruce.ns.cloudflare.com"
 page_data["cloudflare_port"] = "2087"
 page_data["segmentation_timeout"] = 5
 page_data["num_of_fragments"] = 100
+page_data["beep"] = True
 
 
 class SettingGUI:
@@ -50,6 +52,15 @@ class SettingGUI:
     def generate_top_parts(self):
         layout = [
             [psg.Text("Settings", justification="center", font=("Arial Bold", 18))],
+            [psg.HorizontalSeparator()],
+            [
+                psg.Text("Beep:\t"),
+                psg.Checkbox(
+                    text="",
+                    default=self.settings["beep"] if "beep" in self.settings else False,
+                    key="beep",
+                ),
+            ],
             [psg.HorizontalSeparator()],
             [psg.Text("Configs:", font=("Arial Bold", 14))],
             [psg.Button("Factory Reset", key="factory")],
@@ -97,19 +108,19 @@ class SettingGUI:
             #     ),
             # ],
             [
-                psg.Text("Number of Fragmnetation:\t"),
-                psg.InputText(
-                    size=(20, 10),
-                    default_text=self.settings["num_of_fragments"],
-                    key="num_of_fragments",
-                ),
-            ],
-            [
                 psg.Text("Segmentation Timeout:\t"),
                 psg.InputText(
                     size=(20, 10),
                     default_text=self.settings["segmentation_timeout"],
                     key="segmentation_timeout",
+                ),
+            ],
+            [
+                psg.Text("Number of Segmentation:\t"),
+                psg.InputText(
+                    size=(20, 10),
+                    default_text=self.settings["num_of_fragments"],
+                    key="num_of_fragments",
                 ),
             ],
         ]
@@ -133,6 +144,7 @@ class SettingGUI:
         self.settings["segmentation_timeout"] = self.window[
             "segmentation_timeout"
         ].get()
+        self.settings["beep"] = self.window["beep"].get()
 
     def close(self):
         self.window.close()

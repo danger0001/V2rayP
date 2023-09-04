@@ -55,7 +55,8 @@ class FactorySetting:
     "cloudflare_address": "bruce.ns.cloudflare.com",
     "segmentation_timeout": "5",
     "num_of_fragments": "77",
-    "subscription": ""
+    "subscription": "",
+    "beep": true
 }"""
 
 

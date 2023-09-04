@@ -25,6 +25,7 @@ from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
 from libs.in_win import (
     FactorySetting,
+    beep,
     config_path,
     download_xray_gost,
     inside_windows,
@@ -625,6 +626,9 @@ class MainGUI:
         self.window["-TABLE-"].update(rows)
 
     def disconnect(self):
+        if "beep" in self.gui_data:
+            if self.gui_data["beep"]:
+                beep()
         if self.gfw_interface:
             self.gfw_interface.stop()
 
@@ -1135,7 +1139,7 @@ class MainGUI:
 
             window = psg.Window(
                 "Upgradig...",
-                [[psg.MLine(key="debug2", size=(20, 20), autoscroll=True)]],
+                [[psg.MLine(key="debug2", size=(50, 20), autoscroll=True)]],
                 finalize=True,
                 font=("", 9),
                 keep_on_top=True,
