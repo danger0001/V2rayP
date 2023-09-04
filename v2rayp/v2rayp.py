@@ -1000,6 +1000,7 @@ class MainGUI:
         self.enable_loops = False
         self.disconnect()
         self.window.close()
+        os._exit(0)
         exit()
 
     def about_generator(self):
@@ -1128,7 +1129,7 @@ class MainGUI:
 
             window = psg.Window(
                 "Upgradig...",
-                [[psg.MLine(key="debug2", size=(20, 20))]],
+                [[psg.MLine(key="debug2", size=(20, 20), autoscroll=True)]],
                 finalize=True,
                 font=("", 9),
                 keep_on_top=True,
@@ -1162,12 +1163,13 @@ class MainGUI:
                     lines += line
                     window["debug2"].update(lines)
                     time.sleep(0.1)
-                window["debug2"].update("Finished!")
+                window["debug2"].update("Update Finished!\nPlease start again!")
                 time.sleep(1)
                 window.close()
+
                 self.Exit()
 
-            threading.Thread(target=update_inside).start()
+            threading.Thread(target=update_inside, daemon=True).start()
 
     def start_window(self):
         self.load_settings()
