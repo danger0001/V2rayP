@@ -23,14 +23,7 @@ from libs.GUIs.SettingGUI import SettingGUI
 from libs.GUIs.TrojanGUI import TrojanGUI
 from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
-from libs.in_win import (
-    FactorySetting,
-    beep,
-    config_path,
-    download_xray_gost,
-    inside_windows,
-    pass_by_ref,
-)
+from libs.in_win import FactorySetting, beep, config_path, download_xray_gost, inside_windows, pass_by_ref
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
 from libs.RefereshEditPage import RefereshEditPage
@@ -511,7 +504,12 @@ class MainGUI:
             if inside_windows():
                 if self.isConnected and inside_windows:
                     self.tray.change_icon("assets/icons/picon_green.png")
-                    self.window["connection_name"].update(background_color="green")
+                    self.window["connection_name"].update(background_color="lawn green")
+                    if self.first_connect == True:
+                        self.first_connect = False
+                        if "beep" in self.gui_data:
+                            if self.gui_data["beep"]:
+                                beep()
                 else:
                     self.tray.change_icon("assets/icons/picon_red.png")
                     self.window["connection_name"].update(background_color="red")
@@ -632,9 +630,6 @@ class MainGUI:
         self.window["-TABLE-"].update(rows)
 
     def disconnect(self):
-        if "beep" in self.gui_data:
-            if self.gui_data["beep"]:
-                beep()
         if self.gfw_interface:
             self.gfw_interface.stop()
 
@@ -806,7 +801,7 @@ class MainGUI:
 
     def connect(self, sel):
         self.disconnect()
-
+        self.first_connect = True
         self.enable_loops = True
         filename: str = self.rows_dict[sel]["remark"]
         protocol = self.rows_dict[sel]["protocol"]

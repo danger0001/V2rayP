@@ -137,7 +137,10 @@ def download_binary(url, filename, window, enable_download: pass_by_ref):
 
 def beep():
     if os.name == "nt":
-        winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
+        # winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
+        winsound.PlaySound(
+            "assets/sounds/beep.wav", winsound.SND_ALIAS | winsound.SND_ASYNC
+        )
 
 
 def inside_windows():
