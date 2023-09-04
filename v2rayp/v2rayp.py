@@ -390,6 +390,9 @@ class MainGUI:
         control = [
             psg.Button("HideToTray", key="hide") if inside_windows() else psg.Text(""),
             psg.Button("Referesh", key="referesh"),
+        ]
+
+        copy_paste = [
             psg.Button("Copy", key="copy"),
             psg.Button("Paste", key="paste"),
         ]
@@ -398,6 +401,7 @@ class MainGUI:
             psg.Frame("Connection", [conn]),
             psg.Frame("Profile", [profile]),
             psg.Frame("Control", [control]),
+            psg.Frame("Copy Paste", [copy_paste], font=("", 9)),
         ]
         return ret
 
