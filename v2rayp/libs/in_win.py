@@ -4,6 +4,9 @@ import platform
 # Define the local filename to save data
 import requests
 
+if os.name == "nt":
+    import winsound
+
 
 class pass_by_ref:
     value = None
@@ -129,6 +132,11 @@ def download_binary(url, filename, window, enable_download: pass_by_ref):
         path = path.replace("\\", "/")
         os.popen(f"move {path}\\{filename}.tmp {path}\\{filename}")
     os.chdir(cwd)
+
+
+def beep():
+    if os.name == "nt":
+        winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
 
 
 def inside_windows():
