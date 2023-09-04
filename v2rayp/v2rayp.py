@@ -1000,7 +1000,10 @@ class MainGUI:
         self.enable_loops = False
         self.disconnect()
         self.window.close()
-        os.popen(f"taskkill /f /PID {os.getpid()}")
+        # os.popen(f"taskkill /f /PID {os.getpid()}")
+        import signal
+
+        os.kill(os.getpid(), signal.CTRL_C_EVENT)
         os._exit(0)
         exit()
 
@@ -1121,10 +1124,12 @@ class MainGUI:
             "Do you want to update from here?\nAfter upgrading you should exit and open v2rayp again.",
             title="Upgrading...",
         )
-        self.disconnect()
+
         # self.window.close()
         print(resp)
         if resp == "OK":
+            self.window.disable()
+            self.disconnect()
             cmd = f"{sys.executable} -m pip install --upgrade v2rayp"
             print(cmd)
 
@@ -1155,6 +1160,7 @@ class MainGUI:
                         break
 
             threading.Thread(target=get_process_status).start()
+            # self.window.close()
 
             def update_inside():
                 nonlocal run
@@ -1166,7 +1172,7 @@ class MainGUI:
                     time.sleep(0.1)
                 window["debug2"].update("Update Finished!\nPlease start again!")
                 time.sleep(1)
-                window.close()
+                # window.close()
 
                 self.Exit()
 
@@ -1180,6 +1186,8 @@ class MainGUI:
 
         self.firstTime = True
         while True:
+            if not self.window:
+                exit(0)
             event, values = self.window.read()
 
             try:
@@ -1203,12 +1211,13 @@ class MainGUI:
                 if event == self.tray.key:
                     event = values[event]
             ##################
-            if event in ("exit", "Exit"):
+            if event in ("exit", "Exit", psg.WIN_CLOSED):
                 break
             elif event == "save":
                 self.save_gui()
+
             #############################################
-            elif (event in ("connect", "Connect")) or ("Enter" in event):
+            elif event in ("connect", "Connect", "Enter"):
                 self.connected_selected_number = self.selected_profile_number
                 try:
                     self.connect(sel)
@@ -1226,7 +1235,10 @@ class MainGUI:
                     rows, select_rows=[self.selected_profile_number]
                 )
             #############################################
-            elif ("edit" in event) or ("-double-" in event):
+            elif event in (
+                "edit",
+                "-double-",
+            ):  # ("edit" in event) or ("-double-" in event):
                 try:
                     print(sel)
                 except:
@@ -1234,14 +1246,20 @@ class MainGUI:
                 self.edit_profile_page(sel)
 
             ######################
-            elif ("From Clipboard" in event) or ("paste" in event):
+            elif event in (
+                "From Clipboard",
+                "paste",
+            ):  # ("From Clipboard" in event) or ("paste" in event):
                 try:
                     self.paste_uri()
                 except Exception as e:
                     print("Problem in paste: ", str(e))
             elif event == "delete":
                 self.delete()
-            elif ("To Clipboard" in event) or ("copy" in event):
+            elif event in (
+                "To Clipboard",
+                "copy",
+            ):  # ("To Clipboard" in event) or ("copy" in event):
                 try:
                     pyperclip.copy(self.config2url(sel))
                 except Exception as e:
@@ -1258,7 +1276,7 @@ class MainGUI:
             elif event == "Show":
                 self.UnHide()
             #######################right-click
-            elif "Delay" in event:
+            elif event == "Delay":
                 threading.Thread(target=self.ping_test).start()
                 # self.ping_test()
             #####################
@@ -1369,28 +1387,28 @@ class MainGUI:
         self.Exit()
 
     def check_new_file_event(self, event):
-        if "New Vless" in event:
+        if "New Vless" == event:
             page_data = VlessGUI().start_window()
             if page_data:
                 page_data["protocol"] = "vless"
                 url = ExportURLfromConfig.construc_simple_link_from_edit_page(page_data)
                 self.paste_uri(url)
 
-        elif "New Vmess" in event:
+        elif "New Vmess" == event:
             page_data = VmessGUI().start_window()
             if page_data:
                 page_data["protocol"] = "vmess"
                 url = ExportURLfromConfig.construc_simple_link_from_edit_page(page_data)
                 self.paste_uri(url)
 
-        elif "New Trojan" in event:
+        elif "New Trojan" == event:
             page_data = TrojanGUI().start_window()
             if page_data:
                 page_data["protocol"] = "trojan"
                 url = ExportURLfromConfig.construc_simple_link_from_edit_page(page_data)
                 self.paste_uri(url)
 
-        elif "New Gost" in event:
+        elif "New Gost" == event:
             page_data = GostGUI(None).start_window()
             if page_data:
                 self.paste_uri(page_data)
