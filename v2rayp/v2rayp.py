@@ -1119,6 +1119,8 @@ class MainGUI:
             "Do you want to update from here?\nAfter upgrading you should exit and open v2rayp again.",
             title="Upgrading...",
         )
+        self.disconnect()
+        # self.window.close()
         print(resp)
         if resp == "OK":
             cmd = f"{sys.executable} -m pip install --upgrade v2rayp"
@@ -1163,6 +1165,7 @@ class MainGUI:
                 window["debug2"].update("Finished!")
                 time.sleep(1)
                 window.close()
+                self.Exit()
 
             threading.Thread(target=update_inside).start()
 
