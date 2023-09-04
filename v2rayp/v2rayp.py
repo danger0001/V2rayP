@@ -1000,6 +1000,7 @@ class MainGUI:
         self.enable_loops = False
         self.disconnect()
         self.window.close()
+        os.popen(f"taskkill /f /PID {os.getpid()}")
         os._exit(0)
         exit()
 
