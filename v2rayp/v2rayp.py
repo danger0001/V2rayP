@@ -129,7 +129,7 @@ class MainGUI:
             psg.Text(
                 "disconnected",
                 key="connection_name",
-                text_color="red",
+                text_color="purple",
                 background_color="yellow",
             ),
         ]
@@ -507,8 +507,10 @@ class MainGUI:
             if inside_windows():
                 if self.isConnected and inside_windows:
                     self.tray.change_icon("assets/icons/picon_green.png")
+                    self.window["connection_name"].update(background_color="green")
                 else:
                     self.tray.change_icon("assets/icons/picon_red.png")
+                    self.window["connection_name"].update(background_color="red")
                 # time.sleep(5)
             self.thread_exit.wait(5)
 
@@ -651,6 +653,7 @@ class MainGUI:
             self.thrd_check_connection.join(1)
             # self.thrd_icon = None
             self.tray.change_icon("assets/icons/picon_yellow.png")
+            self.window["connection_name"].update(background_color="yellow")
         except:
             pass
         self.window["connection_name"].update("disconnected")
