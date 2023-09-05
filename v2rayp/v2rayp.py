@@ -23,7 +23,14 @@ from libs.GUIs.SettingGUI import SettingGUI
 from libs.GUIs.TrojanGUI import TrojanGUI
 from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
-from libs.in_win import FactorySetting, beep, config_path, download_xray_gost, inside_windows, pass_by_ref
+from libs.in_win import (
+    FactorySetting,
+    beep,
+    config_path,
+    download_xray_gost,
+    inside_windows,
+    pass_by_ref,
+)
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
 from libs.RefereshEditPage import RefereshEditPage
@@ -1177,7 +1184,9 @@ class MainGUI:
                     window["debug2"].update(lines)
                     time.sleep(0.1)
                 window["debug2"].update("Update Finished!\nPlease start again!")
+
                 time.sleep(1)
+                self.window.enable()
                 # window.close()
 
                 self.Exit()
