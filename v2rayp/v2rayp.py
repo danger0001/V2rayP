@@ -1190,20 +1190,21 @@ class MainGUI:
 
                 time.sleep(1)
                 upgrade_window.close()
+                self.Exit()
 
             threading.Thread(target=get_process_status, daemon=True).start()
             threading.Thread(target=update_inside, daemon=True).start()
-            while True:
-                try:
-                    event, _ = upgrade_window.read()
-                    if (
-                        event == psg.WINDOW_CLOSED
-                    ):  # If the window is closed, exit the loop
-                        self.window.enable()
-                except:
-                    break
+            # while True:
+            #     try:
+            #         event, _ = upgrade_window.read()
+            #         if (
+            #             event == psg.WINDOW_CLOSED
+            #         ):  # If the window is closed, exit the loop
+            #             self.window.enable()
+            #     except:
+            #         break
 
-            self.Exit()
+            # self.Exit()
 
     def start_window(self):
         self.load_settings()

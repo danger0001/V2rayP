@@ -1,4 +1,4 @@
-----> change version name
+;----> change version name
 
 rmdir /q /s dist
 rmdir /q /s  V2RayP.egg-info
