@@ -502,6 +502,7 @@ class MainGUI:
 
     def check_connection(self):
         self.thread_exit = threading.Event()
+        self.check_connection_time = 5
         while self.enable_loops:
             print("connection checking...")
 
@@ -510,6 +511,7 @@ class MainGUI:
             )
             if inside_windows():
                 if self.isConnected and inside_windows:
+                    self.check_connection_time = 10
                     self.tray.change_icon("assets/icons/picon_green.png")
                     self.window["connection_name"].update(background_color="lawn green")
                     if self.first_connect == True:
@@ -518,10 +520,10 @@ class MainGUI:
                             if self.gui_data["beep"]:
                                 beep()
                 else:
+                    self.check_connection_time = 5
                     self.tray.change_icon("assets/icons/picon_red.png")
                     self.window["connection_name"].update(background_color="red")
-                # time.sleep(5)
-            self.thread_exit.wait(5)
+            self.thread_exit.wait(self.check_connection_time)
 
     def Hide_Show_Notification(self, text="Minimized to tray!"):
         if self.first_minimized is True:
@@ -970,8 +972,9 @@ class MainGUI:
                 SaveGUIConfigPage(filename, page_data, False, group)
 
         else:
-            new_data = GostGUI(filename).start_window()
-            SaveGUIConfigPage(filename, new_data)
+            new_data = GostGUI(filename, group).start_window()
+            if new_data:  # filename, page_data, new_file: bool = False, group=""
+                SaveGUIConfigPage(filename, new_data, True, group)
 
     def set_reset_system_proxy(self, mode="reset"):
         if mode == "set":

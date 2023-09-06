@@ -1,4 +1,5 @@
-import json, sys
+import json
+import sys
 
 sys.path.append("v2rayp")
 
@@ -16,10 +17,10 @@ page_data["remark"] = ""
 
 
 class GostGUI:
-    def __init__(self, pname) -> None:
+    def __init__(self, pname, subscription) -> None:
         if pname:
             self.pname = pname
-            self.load_json_data()
+            self.load_json_data(subscription)
 
         else:
             self.page_data = page_data
@@ -113,9 +114,12 @@ class GostGUI:
         self.page_data["remote_user"] = self.window["username"].get()
         self.page_data["remote_password"] = self.window["password"].get()
 
-    def load_json_data(self):
+    def load_json_data(self, subscription=""):
+        subscription_path = ""
+        if len(subscription) > 1:
+            subscription_path = f"\\subscriptions\\{subscription}"
         with open(
-            f"{config_path()}\\gost_profiles\\{self.pname}",
+            f"{config_path()}\\gost_profiles{subscription_path}\\{self.pname}",
             "r",
         ) as json_file:
             # Write the JSON data to the file
