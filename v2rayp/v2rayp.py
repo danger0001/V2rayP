@@ -747,6 +747,16 @@ class MainGUI:
 
         return new_filename
 
+    def is_base64(self, text):
+        try:
+            # Attempt to decode the text
+            base64.b64decode(text)
+            # If decoding succeeds, it is Base64 encoded
+            return True
+        except:
+            # If decoding fails, it is not Base64 encoded
+            return False
+
     def paste_uri(self, url=None):
         if url == None:
             url = pyperclip.paste()
@@ -776,9 +786,15 @@ class MainGUI:
 
         else:
             path = f"{config_path()}\\gost_profiles\\"
-            content64 = url.replace("gost://", "")
-            content = str(base64.b64decode(content64).decode("utf-8"))
-            config_json = json.loads(content)
+            try:
+                content64 = url.replace("gost://", "")
+                content = str(base64.b64decode(content64).decode("utf-8"))
+                config_json = json.loads(content)
+            except:
+                if isinstance(url, dict):
+                    config_json = url
+                else:
+                    raise Exception("Error 21236")
             profileName = (
                 f'{config_json["remote_protocol"]}_{config_json["remote_port"]}'
             )
