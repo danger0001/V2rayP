@@ -119,9 +119,13 @@ class ExportURLfromConfig:
 
         output["net"] = json_data["outbounds"][0]["streamSettings"]["network"]
         output["tls"] = json_data["outbounds"][0]["streamSettings"]["security"]
-        output["sni"] = json_data["outbounds"][0]["streamSettings"]["tlsSettings"][
-            "serverName"
-        ]
+
+        try:
+            output["sni"] = json_data["outbounds"][0]["streamSettings"]["tlsSettings"][
+                "serverName"
+            ]
+        except:
+            output["sni"] = ""
 
         # output["allowInsecure"] = json_data["outbounds"][0]["streamSettings"][
         #     "tlsSettings"

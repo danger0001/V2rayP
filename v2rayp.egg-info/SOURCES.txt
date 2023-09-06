@@ -18,6 +18,7 @@ v2rayp/assets/icons/picon_blue.png
 v2rayp/assets/icons/picon_green.png
 v2rayp/assets/icons/picon_red.png
 v2rayp/assets/icons/picon_yellow.png
+v2rayp/assets/sounds/beep.wav
 v2rayp/configs/gost_profiles/gost1.json
 v2rayp/configs/gost_profiles/grpc-hels9.imconnect.top-41035.json
 v2rayp/configs/gost_profiles/heidar_grpc_2053.json
