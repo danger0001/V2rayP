@@ -1141,22 +1141,21 @@ class MainGUI:
             title="Upgrading...",
         )
 
-        # self.window.close()
-        print(resp)
         if resp == "OK":
             self.window.disable()
             self.disconnect()
+
             cmd = f"{sys.executable} -m pip install --upgrade v2rayp"
             print(cmd)
 
-            window = psg.Window(
+            upgrade_window = psg.Window(
                 "Upgradig...",
                 [[psg.MLine(key="debug2", size=(50, 20), autoscroll=True)]],
                 finalize=True,
                 font=("", 9),
                 keep_on_top=True,
             )
-            window["debug2"].update("Upgrading...")
+            upgrade_window["debug2"].update("Upgrading...")
 
             p = subprocess.Popen(
                 cmd,
@@ -1171,30 +1170,40 @@ class MainGUI:
                 while True:
                     time.sleep(1)
                     run = p.poll() is None
-
                     if run == False:
                         break
-
-            threading.Thread(target=get_process_status).start()
-            # self.window.close()
 
             def update_inside():
                 nonlocal run
                 lines = ""
-                while run:
-                    line = p.stdout.readline().decode().strip()
-                    lines += line
-                    window["debug2"].update(lines)
-                    time.sleep(0.1)
-                window["debug2"].update("Update Finished!\nPlease start again!")
+                try:
+                    while run:
+                        line = p.stdout.readline().decode().strip()
+                        lines += line + "\n"
+                        upgrade_window["debug2"].update(lines)
+                        time.sleep(0.1)
+                    upgrade_window["debug2"].update(
+                        "Update Finished!\nPlease start again!"
+                    )
+                except:
+                    pass
 
                 time.sleep(1)
-                self.window.enable()
-                # window.close()
+                upgrade_window.close()
 
-                self.Exit()
-
+            threading.Thread(target=get_process_status, daemon=True).start()
             threading.Thread(target=update_inside, daemon=True).start()
+            while True:
+                try:
+                    event, _ = upgrade_window.read()
+                    if (
+                        event == psg.WINDOW_CLOSED
+                    ):  # If the window is closed, exit the loop
+                        self.window.enable()
+                except:
+                    break
+
+            self.Exit()
 
     def start_window(self):
         self.load_settings()
