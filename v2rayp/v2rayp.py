@@ -23,8 +23,15 @@ from libs.GUIs.SettingGUI import SettingGUI
 from libs.GUIs.TrojanGUI import TrojanGUI
 from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
-from libs.in_win import FactorySetting, beep, check_process_exists, config_path, download_xray_gost, inside_windows, \
-    pass_by_ref
+from libs.in_win import (
+    FactorySetting,
+    beep,
+    check_process_exists,
+    config_path,
+    download_xray_gost,
+    inside_windows,
+    pass_by_ref,
+)
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
 from libs.RefereshEditPage import RefereshEditPage
@@ -508,7 +515,9 @@ class MainGUI:
                     if self.isConnected and inside_windows:
                         self.check_connection_time = 10
                         self.tray.change_icon("assets/icons/picon_green.png")
-                        self.window["connection_name"].update(background_color="lawn green")
+                        self.window["connection_name"].update(
+                            background_color="lawn green"
+                        )
                         if self.first_connect == True:
                             self.first_connect = False
                             if "beep" in self.gui_data:
@@ -651,7 +660,7 @@ class MainGUI:
             self.connect_gost.kill()
             # self.connect_gost = None
         except Exception as e:
-            print("error in killing gost: ",str(e))
+            print("error in killing gost: ", str(e))
 
         try:
             self.thread_exit.set()
@@ -825,13 +834,21 @@ class MainGUI:
         self.disconnect()
         ##################
         if check_process_exists("xray") or check_process_exists("gost"):
-            resp = psg.popup_yes_no(
+            import tkinter
+
+            answer = tkinter.messagebox.askyesno(
+                "Confirmation",
                 "Another Gost or Xray process is running!\nDo you want to kill it?",
-                keep_on_top=True,
             )
-            print(resp)
-            if resp == "Yes":
+            if answer:
                 self.force_kill_binaries()
+            # resp = psg.popup_yes_no(
+            #     "Another Gost or Xray process is running!\nDo you want to kill it?",
+            #     keep_on_top=True,
+            # )
+            # print(resp)
+            # if resp == "Yes":
+            #     self.force_kill_binaries()
         ####################
         self.first_connect = True
         self.enable_loops = True
@@ -1270,10 +1287,11 @@ class MainGUI:
             #############################################
             elif event in ("connect", "Connect", "Enter"):
                 self.connected_selected_number = self.selected_profile_number
-                try:
-                    self.connect(sel)
-                except Exception as e:
-                    print("Error717 in connection:", str(e))
+                threading.Thread(target=self.connect, args=(sel,)).start()
+                # try:
+                #     self.connect(sel)
+                # except Exception as e:
+                #     print("Error717 in connection:", str(e))
 
             elif event in ("disconnect", "Disconnect"):
                 threading.Thread(target=self.disconnect).start()
@@ -1426,7 +1444,6 @@ class MainGUI:
             else:
                 self.check_new_file_event(event)
             ################################
-
         self.Exit()
 
     def force_kill_binaries(self):
