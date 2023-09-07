@@ -1,6 +1,8 @@
 import os
 import platform
 
+import psutil
+
 # Define the local filename to save data
 import requests
 
@@ -143,6 +145,21 @@ def beep():
         )
 
 
+def check_process_exists(process_name):
+    if inside_windows():
+        ps_list = os.popen("tasklist").read()
+    else:
+        ps_list = os.popen("ps").read()
+    if process_name in ps_list:
+        return True
+    return False
+
+    # for proc in psutil.process_iter(["name"]):
+    #     if process_name in proc.info["name"]:
+    #         return True
+    # return False
+
+
 def inside_windows():
     inside_window = False
     if os.name == "nt":
@@ -164,6 +181,7 @@ def config_path():
 
 if __name__ == "__main__":
     print(config_path())
+    print("gost exist: ", check_process_exists("gost"))
     # download_xray()
     # a = pass_by_ref()
     # a.value = True

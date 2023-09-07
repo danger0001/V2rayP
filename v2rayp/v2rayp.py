@@ -23,14 +23,8 @@ from libs.GUIs.SettingGUI import SettingGUI
 from libs.GUIs.TrojanGUI import TrojanGUI
 from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
-from libs.in_win import (
-    FactorySetting,
-    beep,
-    config_path,
-    download_xray_gost,
-    inside_windows,
-    pass_by_ref,
-)
+from libs.in_win import FactorySetting, beep, check_process_exists, config_path, download_xray_gost, inside_windows, \
+    pass_by_ref
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
 from libs.RefereshEditPage import RefereshEditPage
@@ -229,7 +223,7 @@ class MainGUI:
     #         return string[-size:]
 
     def _update_debug(self):
-        self.debug_size = 2048
+        self.debug_size = 10000
         with io.StringIO() as buffer, redirect_stdout(buffer):
             while True:
                 time.sleep(self.referesh_terminal_period)
@@ -510,19 +504,22 @@ class MainGUI:
                 "http://1.1.1.1/", int(self.local_port)
             )
             if inside_windows():
-                if self.isConnected and inside_windows:
-                    self.check_connection_time = 10
-                    self.tray.change_icon("assets/icons/picon_green.png")
-                    self.window["connection_name"].update(background_color="lawn green")
-                    if self.first_connect == True:
-                        self.first_connect = False
-                        if "beep" in self.gui_data:
-                            if self.gui_data["beep"]:
-                                beep()
-                else:
-                    self.check_connection_time = 5
-                    self.tray.change_icon("assets/icons/picon_red.png")
-                    self.window["connection_name"].update(background_color="red")
+                try:
+                    if self.isConnected and inside_windows:
+                        self.check_connection_time = 10
+                        self.tray.change_icon("assets/icons/picon_green.png")
+                        self.window["connection_name"].update(background_color="lawn green")
+                        if self.first_connect == True:
+                            self.first_connect = False
+                            if "beep" in self.gui_data:
+                                if self.gui_data["beep"]:
+                                    beep()
+                    else:
+                        self.check_connection_time = 5
+                        self.tray.change_icon("assets/icons/picon_red.png")
+                        self.window["connection_name"].update(background_color="red")
+                except:
+                    pass
             self.thread_exit.wait(self.check_connection_time)
 
     def Hide_Show_Notification(self, text="Minimized to tray!"):
@@ -647,14 +644,14 @@ class MainGUI:
             self.connectv2ray.kill()
             # self.connectv2ray = None
         except Exception as e:
-            print("error in killing", e)
+            print("error in killing v2ray: ", str(e))
 
         try:
             print(self.connect_gost)
             self.connect_gost.kill()
             # self.connect_gost = None
         except Exception as e:
-            print("error in killing", e)
+            print("error in killing gost: ",str(e))
 
         try:
             self.thread_exit.set()
@@ -826,6 +823,16 @@ class MainGUI:
 
     def connect(self, sel):
         self.disconnect()
+        ##################
+        if check_process_exists("xray") or check_process_exists("gost"):
+            resp = psg.popup_yes_no(
+                "Another Gost or Xray process is running!\nDo you want to kill it?",
+                keep_on_top=True,
+            )
+            print(resp)
+            if resp == "Yes":
+                self.force_kill_binaries()
+        ####################
         self.first_connect = True
         self.enable_loops = True
         filename: str = self.rows_dict[sel]["remark"]
@@ -1265,7 +1272,6 @@ class MainGUI:
                 self.connected_selected_number = self.selected_profile_number
                 try:
                     self.connect(sel)
-
                 except Exception as e:
                     print("Error717 in connection:", str(e))
 
@@ -1363,14 +1369,7 @@ class MainGUI:
 
             ##############################3
             elif event == "Force Kill Xray,Gost":
-                if inside_windows():
-                    os.popen("taskkill /f /im xray.exe").read()
-                    os.popen("taskkill /f /im gost.exe").read()
-                else:
-                    os.popen("killall -9 xray").read()
-                    os.popen("killall -9 gost").read()
-                self.disconnect()
-                print("Forced to be killed!")
+                self.force_kill_binaries()
 
             elif event == "Upgrade V2RayP":
                 self.upgrade_v2rayp()
@@ -1429,6 +1428,16 @@ class MainGUI:
             ################################
 
         self.Exit()
+
+    def force_kill_binaries(self):
+        self.disconnect()
+        if inside_windows():
+            os.popen("taskkill /f /im xray.exe").read()
+            os.popen("taskkill /f /im gost.exe").read()
+        else:
+            os.popen("killall -9 xray").read()
+            os.popen("killall -9 gost").read()
+        print("Forced to be killed!")
 
     def check_new_file_event(self, event):
         if "New Vless" == event:
