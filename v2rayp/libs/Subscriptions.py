@@ -68,13 +68,16 @@ class Subscriptions:
         # responses = [
         #     r"trojan://LjWyuE2d8M@hels.ddns.net:44838?security=reality&sni=yahoo.com&fp=firefox&pbk=8LIuGGsdhR59qjyRALAmGKNuKVlyH3t8OqJmRRdyKl4&sid=92cd56b1&spx=%2F&type=grpc"
         # ]
-        subscription_name = self.create_name_from_url(self.URL)  # "isharifi"
+        subscription_name = (
+            self.create_name_from_url(self.URL).replace(" ", "_").replace("|", "_")
+        )  # "isharifi"
         self.make_folder_ready(subscription_name)
 
         for response in responses:
             try:
                 if "gost://" not in response:
                     json_out, name = generate_v2rayconfig_with_name(response)
+                    name = name.replace(" ", "_").replace("|", "_")
                     self.put_v2ray_subscription_in_folder(
                         subscription_name, name, json_out
                     )

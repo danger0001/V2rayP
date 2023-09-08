@@ -86,6 +86,7 @@ class MainGUI:
         self.show = True
         self.referesh_terminal_period = 1
         self.thrd_check_connection = None
+        self.enable_loops = False
         threading.Thread(target=self._update_debug, daemon=True).start()
 
     def cpulimit(self):
@@ -236,24 +237,28 @@ class MainGUI:
         self.debug_size = 10000
         with io.StringIO() as buffer, redirect_stdout(buffer):
             while True:
-                time.sleep(self.referesh_terminal_period)
+                while self.enable_loops:
+                    time.sleep(self.referesh_terminal_period)
 
-                # if len(output) >= self.debug_size:
-                # Flush the content
-                content = buffer.getvalue()[
-                    -self.debug_size :
-                ]  # Get the current content and remove the last 1024 characters
-                buffer.seek(0)  # Move the pointer to the beginning of the stream
-                buffer.truncate(0)  # Clear the current content
-                buffer.write(content)  # Write the modified content back to the object
+                    # if len(output) >= self.debug_size:
+                    # Flush the content
+                    content = buffer.getvalue()[
+                        -self.debug_size :
+                    ]  # Get the current content and remove the last 1024 characters
+                    buffer.seek(0)  # Move the pointer to the beginning of the stream
+                    buffer.truncate(0)  # Clear the current content
+                    buffer.write(
+                        content
+                    )  # Write the modified content back to the object
 
-                # output = buffer.getvalue()
-                # if len(output) > len(self.mline_text):
-                # self.mline_text = output  # [-self.debug_size :]
-                try:
-                    self.window["debug_box"].update(value=content)
-                except Exception as e:
-                    print("Error in terminal 731: ", str(e))
+                    # output = buffer.getvalue()
+                    # if len(output) > len(self.mline_text):
+                    # self.mline_text = output  # [-self.debug_size :]
+                    try:
+                        self.window["debug_box"].update(value=content)
+                    except Exception as e:
+                        print("Error in terminal 731: ", str(e))
+                time.sleep(1)
 
     def _getLayout(self) -> list:
         return self.layout
@@ -775,6 +780,7 @@ class MainGUI:
         if ("trojan" in url) or ("vless" in url) or ("vmess" in url):
             config_json = json.loads(generateConfig(url))
             profileName = config_json["_comment"]["remark"]
+            profileName = profileName.replace(" ", "_").replace("|", "_")
             config_json["inbounds"][0]["port"] = int(self.local_port)
             # config_json["inbounds"][1]["port"] = int(self.local_port) + 1
             path = f"{config_path()}\\v2ray_profiles\\"
