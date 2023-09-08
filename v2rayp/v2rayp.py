@@ -26,6 +26,7 @@ from libs.GUIs.VmessGUI import VmessGUI
 from libs.in_win import (
     FactorySetting,
     beep,
+    beep_second,
     check_process_exists,
     config_path,
     download_xray_gost,
@@ -120,13 +121,13 @@ class MainGUI:
             [self.generate_menu()],
             [self.generate_top_part()],
             [self.generate_middle_part()],
-            [self.generate_bott2_row()],
+            [self.generate_bottom_row()],
             [self.generate_Table()],
             [self.generate_ConsoleBox()],
             [[psg.ProgressBar(max_value=100, key="progressbar", size=(100, 10))]],
         ]
 
-    def generate_middle_part(self):
+    def generate_top_part(self):
         c1 = [
             psg.Text(
                 "disconnected",
@@ -167,7 +168,7 @@ class MainGUI:
         ]
         return row
 
-    def generate_bott2_row(self):
+    def generate_bottom_row(self):
         copy_paste = [
             psg.Button("Copy", key="copy"),
             psg.Button("Paste", key="paste"),
@@ -197,6 +198,13 @@ class MainGUI:
                 "Disconnect",
                 "Set System Proxy",
                 "Reset System Proxy",
+                "Show",
+                "Exit",
+            ]
+            if inside_windows()
+            else [
+                "Connect",
+                "Disconnect",
                 "Show",
                 "Exit",
             ],
@@ -378,7 +386,7 @@ class MainGUI:
         ]
         return psg.Menu(menu_def)
 
-    def generate_top_part(self):
+    def generate_middle_part(self):
         try:
             default_use_fragmentation = self.gui_data["use_fragmentation"]
         except:
@@ -1420,8 +1428,10 @@ class MainGUI:
             ###################################
             elif event == "set_system_proxy" or event == "Set System Proxy":
                 set_socks5_proxy("127.0.0.1", self.local_port)
+                beep_second()
             elif event == "reset_system_proxy" or event == "Reset System Proxy":
                 reset_proxy_settings()
+                beep_second()
             ########################################
             elif event == "shortcut":
                 if inside_windows():
