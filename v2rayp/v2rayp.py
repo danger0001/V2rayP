@@ -508,7 +508,7 @@ class MainGUI:
             print("connection checking...")
 
             self.isConnected = NetTools.is_connected_to_internet(
-                "http://1.1.1.1/", int(self.local_port)
+                "http://www.msn.com/", int(self.local_port)
             )
             if inside_windows():
                 try:
