@@ -131,6 +131,9 @@ class MainGUI:
                 "disconnected",
                 key="connection_name",
                 text_color="purple",
+                justification="center",
+                size=(20, 1),
+                auto_size_text=False,
                 background_color="yellow",
             ),
         ]
