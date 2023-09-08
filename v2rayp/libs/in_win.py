@@ -1,5 +1,6 @@
 import os
 import platform
+import winreg
 
 import psutil
 
@@ -191,3 +192,67 @@ if __name__ == "__main__":
 
     # temp(a)
     # print(a.value)
+
+
+def set_socks5_proxy(proxy_address, proxy_port):
+    # Open the Internet Settings registry key
+    reg_key = winreg.OpenKey(
+        winreg.HKEY_CURRENT_USER,
+        r"Software\Microsoft\Windows\CurrentVersion\Internet Settings",
+        0,
+        winreg.KEY_WRITE,
+    )
+
+    # Enable proxy settings
+    winreg.SetValueEx(reg_key, "ProxyEnable", 0, winreg.REG_DWORD, 1)
+
+    # Set the proxy server address
+    winreg.SetValueEx(
+        reg_key, "ProxyServer", 0, winreg.REG_SZ, f"{proxy_address}:{proxy_port}"
+    )
+
+    # Set the proxy type to SOCKS5
+    winreg.SetValueEx(reg_key, "ProxyServerType", 0, winreg.REG_DWORD, 5)
+
+    # Enable proxy override
+    winreg.SetValueEx(reg_key, "ProxyOverride", 0, winreg.REG_SZ, "<local>")
+
+    # Close the registry key
+    winreg.CloseKey(reg_key)
+
+    print("SOCKS5 proxy successfully set.")
+
+
+def reset_proxy_settings():
+    # Open the Internet Settings registry key
+    reg_key = winreg.OpenKey(
+        winreg.HKEY_CURRENT_USER,
+        r"Software\Microsoft\Windows\CurrentVersion\Internet Settings",
+        0,
+        winreg.KEY_WRITE,
+    )
+
+    try:
+        # Disable proxy settings
+        winreg.SetValueEx(reg_key, "ProxyEnable", 0, winreg.REG_DWORD, 0)
+    except:
+        pass
+    # Delete the proxy server address
+    try:
+        winreg.DeleteValue(reg_key, "ProxyServer")
+    except:
+        pass
+    # Delete the proxy type
+    try:
+        winreg.DeleteValue(reg_key, "ProxyServerType")
+    except:
+        pass
+    # Delete the proxy override
+    try:
+        winreg.DeleteValue(reg_key, "ProxyOverride")
+    except:
+        pass
+    # Close the registry key
+    winreg.CloseKey(reg_key)
+
+    print("System proxy settings successfully reset.")

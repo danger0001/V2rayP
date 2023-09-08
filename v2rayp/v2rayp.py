@@ -31,6 +31,8 @@ from libs.in_win import (
     download_xray_gost,
     inside_windows,
     pass_by_ref,
+    reset_proxy_settings,
+    set_socks5_proxy,
 )
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
@@ -39,9 +41,6 @@ from libs.RefereshTableContent import RefereshTableContent
 from libs.SaveGUIConfigPage import SaveGUIConfigPage
 from libs.Subscriptions import Subscriptions
 from libs.V2RayURL2Config import generateConfig
-
-# sys.path.append("v2rayp")
-
 
 # sys.path.append(
 #     "libs"
@@ -121,6 +120,7 @@ class MainGUI:
             [self.generate_menu()],
             [self.generate_top_part()],
             [self.generate_middle_part()],
+            [self.generate_bott2_row()],
             [self.generate_Table()],
             [self.generate_ConsoleBox()],
             [[psg.ProgressBar(max_value=100, key="progressbar", size=(100, 10))]],
@@ -149,34 +149,44 @@ class MainGUI:
             psg.Button("Update Subscription", key="update_subscription"),
             psg.Button("Delete Subscription", key="delete_subscription"),
         ]
+        c3 = [
+            psg.Button(
+                "Shortcut to Desktop",
+                font=(0, 8),
+                size=(10, 2),
+                key="shortcut",
+            ),
+        ]
+
         row = [
             [
                 psg.Frame("Current Connction", [c1]),
                 psg.Frame("Subscription", [c2]),
-                psg.Frame(
-                    "Shortcut",
-                    [
-                        [
-                            psg.Button(
-                                "Shortcut to Desktop",
-                                font=(0, 8),
-                                size=(10, 2),
-                                key="shortcut",
-                            ),
-                        ]
-                    ],
-                ),
-                psg.Frame(
-                    "Exit",
-                    [
-                        [
-                            psg.Button("Save", key="save"),
-                            psg.Button("Exit", key="exit"),
-                        ]
-                    ],
-                ),
+                psg.Frame("Shortcut", [c3]),
             ],
         ]
+        return row
+
+    def generate_bott2_row(self):
+        copy_paste = [
+            psg.Button("Copy", key="copy"),
+            psg.Button("Paste", key="paste"),
+        ]
+
+        c4 = [
+            psg.Button("Set", key="set_system_proxy"),
+            psg.Button("Reset", key="reset_system_proxy"),
+        ]
+        c5 = [
+            psg.Button("Save", key="save"),
+            psg.Button("Exit", key="exit"),
+        ]
+        row = [
+            psg.Frame("Copy Paste", [copy_paste], font=("", 9)),
+            psg.Frame("System Proxy", [c4]) if inside_windows() else [],
+            psg.Frame("Exit", [c5]),
+        ]
+
         return row
 
     def _generate_tray(self):
@@ -401,16 +411,10 @@ class MainGUI:
             psg.Button("Referesh", key="referesh"),
         ]
 
-        copy_paste = [
-            psg.Button("Copy", key="copy"),
-            psg.Button("Paste", key="paste"),
-        ]
-
         ret = [
             psg.Frame("Connection", [conn]),
             psg.Frame("Profile", [profile]),
             psg.Frame("Control", [control]),
-            psg.Frame("Copy Paste", [copy_paste], font=("", 9)),
         ]
         return ret
 
@@ -1025,15 +1029,15 @@ class MainGUI:
             if new_data:  # filename, page_data, new_file: bool = False, group=""
                 SaveGUIConfigPage(filename, new_data, True, group)
 
-    def set_reset_system_proxy(self, mode="reset"):
-        if mode == "set":
-            cmd = f'reg add \\"HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\\" /v ProxyEnable /t REG_DWORD /d 1 /f && reg add \\"HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\\" /v ProxyServer /t REG_SZ /d \\"socks=127.0.0.1:7595\\" /f'
+    # def set_reset_system_proxy(self, mode="reset"):
+    #     if mode == "set":
+    #         cmd = f'reg add \\"HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\\" /v ProxyEnable /t REG_DWORD /d 1 /f && reg add \\"HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\\" /v ProxyServer /t REG_SZ /d \\"socks=127.0.0.1:7595\\" /f'
 
-        elif mode == "reset":
-            cmd = 'reg add \\"HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\\" /v ProxyEnable /t REG_DWORD /d 0 /f'
+    #     elif mode == "reset":
+    #         cmd = 'reg add \\"HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\\" /v ProxyEnable /t REG_DWORD /d 0 /f'
 
-        cmd2 = f"powershell Start-Process -WindowStyle Hidden cmd.exe -argumentlist '/k \"{cmd}\"' -Verb Runas; exit"
-        subprocess.Popen(cmd2, shell=True)
+    #     cmd2 = f"powershell Start-Process -WindowStyle Hidden cmd.exe -argumentlist '/k \"{cmd}\"' -Verb Runas; exit"
+    #     subprocess.Popen(cmd2, shell=True)
 
     def run_command_as_admin(self, cmd):
         cmd2 = f"powershell Start-Process -WindowStyle Hidden cmd.exe -argumentlist '/k \"{cmd}\"' -Verb Runas"
@@ -1365,11 +1369,6 @@ class MainGUI:
             elif event == "To Json File":
                 self.export_config_file()
             ##############################
-            elif event == "Set System Proxy":
-                self.set_reset_system_proxy("set")
-            elif event == "Reset System Proxy":
-                self.set_reset_system_proxy("reset")
-            ##############################
             elif event == "Settings":
                 self.set_settings_gui()
 
@@ -1419,6 +1418,11 @@ class MainGUI:
                     continue
                 self.download_module("gost")
             ###################################
+            elif event == "set_system_proxy" or event == "Set System Proxy":
+                set_socks5_proxy("127.0.0.1", self.local_port)
+            elif event == "reset_system_proxy" or event == "Reset System Proxy":
+                reset_proxy_settings()
+            ########################################
             elif event == "shortcut":
                 if inside_windows():
                     exec = sys.executable.replace("python.exe", "pythonw.exe")
