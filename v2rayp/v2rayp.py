@@ -6,6 +6,7 @@ import subprocess
 import sys
 import threading
 import time
+import tkinter
 import uuid
 from contextlib import redirect_stdout
 
@@ -23,18 +24,8 @@ from libs.GUIs.SettingGUI import SettingGUI
 from libs.GUIs.TrojanGUI import TrojanGUI
 from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
-from libs.in_win import (
-    FactorySetting,
-    beep,
-    beep_second,
-    check_process_exists,
-    config_path,
-    download_xray_gost,
-    inside_windows,
-    pass_by_ref,
-    reset_proxy_settings,
-    set_socks5_proxy,
-)
+from libs.in_win import FactorySetting, beep, beep_second, check_process_exists, config_path, download_xray_gost, \
+    inside_windows, pass_by_ref, reset_proxy_settings, set_socks5_proxy
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
 from libs.RefereshEditPage import RefereshEditPage
@@ -855,7 +846,7 @@ class MainGUI:
         self.disconnect()
         ##################
         if check_process_exists("xray") or check_process_exists("gost"):
-            import tkinter
+            
 
             answer = tkinter.messagebox.askyesno(
                 "Confirmation",
@@ -881,9 +872,13 @@ class MainGUI:
             if inside_windows():
                 path = f"{path}.exe"
             if not os.path.isfile(path):
-                resp = psg.popup_ok_cancel("Please download Xray", keep_on_top=True)
-                print(resp)
-                if resp == "OK":
+                # resp = psg.popup_ok_cancel("Please download Xray", keep_on_top=True)
+                answer = tkinter.messagebox.askyesno(
+                    "Confirmation",
+                    "You should install Xray.\nDo you want to download Xray?",
+                )
+
+                if answer:
                     self.download_module("xray")
                     # threading.Thread(target=self.download_xray, daemon=True).start()
                     return
@@ -892,8 +887,13 @@ class MainGUI:
             if inside_windows():
                 path = f"{path}.exe"
             if not os.path.isfile(path):
-                resp = psg.popup_ok_cancel("Please download gost", keep_on_top=True)
-                if resp == "OK":
+                # resp = psg.popup_ok_cancel("Please download gost", keep_on_top=True)
+                answer = tkinter.messagebox.askyesno(
+                    "Confirmation",
+                    "You should install Gost.\nDo you want to download Gost?",
+                )
+
+                if answer:
                     self.download_module("gost")
                     return
         #######################################
@@ -901,12 +901,18 @@ class MainGUI:
         group = self.rows_dict[sel]["group"]
         #####################
         if use_fragmentation:
-            ch = psg.popup_ok_cancel(
+            # ch = psg.popup_ok_cancel(
+            #     "The fragmentation is selected!\nAre you sure?",
+            #     title="Warning",
+            #     keep_on_top=True,
+            # )
+
+            answer = tkinter.messagebox.askyesno(
+                "Confirmation",
                 "The fragmentation is selected!\nAre you sure?",
-                title="Warning",
-                keep_on_top=True,
             )
-            if ch == "Cancel":
+
+            if not answer:
                 return
 
         if protocol in ("vless", "vmess", "trojan"):  # using v2ray
