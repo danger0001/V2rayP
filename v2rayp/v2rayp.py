@@ -24,8 +24,18 @@ from libs.GUIs.SettingGUI import SettingGUI
 from libs.GUIs.TrojanGUI import TrojanGUI
 from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
-from libs.in_win import FactorySetting, beep, beep_second, check_process_exists, config_path, download_xray_gost, \
-    inside_windows, pass_by_ref, reset_proxy_settings, set_socks5_proxy
+from libs.in_win import (
+    FactorySetting,
+    beep,
+    beep_second,
+    check_process_exists,
+    config_path,
+    download_xray_gost,
+    inside_windows,
+    pass_by_ref,
+    reset_proxy_settings,
+    set_socks5_proxy,
+)
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
 from libs.RefereshEditPage import RefereshEditPage
@@ -846,8 +856,6 @@ class MainGUI:
         self.disconnect()
         ##################
         if check_process_exists("xray") or check_process_exists("gost"):
-            
-
             answer = tkinter.messagebox.askyesno(
                 "Confirmation",
                 "Another Gost or Xray process is running!\nDo you want to kill it?",
@@ -1284,7 +1292,7 @@ class MainGUI:
             if not self.window:
                 exit(0)
             event, values = self.window.read()
-
+            print(event)
             try:
                 sel = int(self.window["-TABLE-"].widget.selection()[0]) - 1
                 self.selected_profile_number = sel
@@ -1312,7 +1320,7 @@ class MainGUI:
                 self.save_gui()
 
             #############################################
-            elif event in ("connect", "Connect", "Enter"):
+            elif event in ("connect", "Connect", "-TABLE-_Enter"):
                 self.connected_selected_number = self.selected_profile_number
                 threading.Thread(target=self.connect, args=(sel,)).start()
                 # try:
@@ -1332,7 +1340,7 @@ class MainGUI:
             #############################################
             elif event in (
                 "edit",
-                "-double-",
+                "-TABLE--double-",
             ):  # ("edit" in event) or ("-double-" in event):
                 try:
                     print(sel)
