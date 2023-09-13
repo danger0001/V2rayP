@@ -1302,6 +1302,7 @@ class MainGUI:
             self.local_port = self.window["local_port"].get()
 
             if self.firstTime:
+                self.window.bind("<Return>", "_Enter")
                 self.window["-TABLE-"].bind("<Return>", "_Enter")
                 self.window["-TABLE-"].bind(
                     "<Double-Button-1>", "-double-"
@@ -1320,7 +1321,7 @@ class MainGUI:
                 self.save_gui()
 
             #############################################
-            elif event in ("connect", "Connect", "-TABLE-_Enter"):
+            elif event in ("connect", "Connect", "-TABLE-_Enter", "_Enter"):
                 self.connected_selected_number = self.selected_profile_number
                 threading.Thread(target=self.connect, args=(sel,)).start()
                 # try:
