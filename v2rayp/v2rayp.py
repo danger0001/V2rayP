@@ -169,28 +169,6 @@ class MainGUI:
         ]
         return row
 
-    def generate_bottom_row(self):
-        copy_paste = [
-            psg.Button("Copy", key="copy"),
-            psg.Button("Paste", key="paste"),
-        ]
-
-        c4 = [
-            psg.Button("Set", key="set_system_proxy"),
-            psg.Button("Reset", key="reset_system_proxy"),
-        ]
-        c5 = [
-            psg.Button("Save", key="save"),
-            psg.Button("Exit", key="exit"),
-        ]
-        row = [
-            psg.Frame("Copy Paste", [copy_paste], font=("", 9)),
-            psg.Frame("System Proxy", [c4]) if inside_windows() else [],
-            psg.Frame("Exit", [c5]),
-        ]
-
-        return row
-
     def _generate_tray(self):
         self.menu = [
             "OneClicked",
@@ -297,6 +275,10 @@ class MainGUI:
 
         self.num_fragment = int(self.settings["num_of_fragments"])
         self.cloudflare_ip = self.settings["cloudflare_address"]
+        try:
+            self.bypass_iran = self.settings["bypass_iran"]
+        except:
+            self.bypass_iran = False
 
     def save_gui(self):
         use_fragmentation = bool(self.window["use_fragmentation"].get())
@@ -335,6 +317,7 @@ class MainGUI:
                     "segmentation_timeout"
                 ]
                 self.gui_data["num_of_fragments"] = self.settings["num_of_fragments"]
+                self.gui_data["bypass_iran"] = self.window["bypass_iran"].get()
 
             except Exception as e:
                 print("Cannot save gui.")
@@ -388,19 +371,9 @@ class MainGUI:
         return psg.Menu(menu_def)
 
     def generate_middle_part(self):
-        try:
-            default_use_fragmentation = self.gui_data["use_fragmentation"]
-        except:
-            default_use_fragmentation = False
-
         conn = [
             psg.Button("(Re)Connect", key="connect"),
             psg.Button("Disconnect", key="disconnect"),
-            psg.Checkbox(
-                text="Use Fragmentation",
-                key="use_fragmentation",
-                default=default_use_fragmentation,
-            ),
             psg.Text("Local Port:"),
             psg.InputText(
                 default_text=self.gui_data["local_port"], key="local_port", size=(5,)
@@ -426,6 +399,57 @@ class MainGUI:
             psg.Frame("Control", [control]),
         ]
         return ret
+
+    def generate_bottom_row(self):
+        try:
+            default_use_fragmentation = self.gui_data["use_fragmentation"]
+        except:
+            default_use_fragmentation = False
+        try:
+            bypass_iran = self.gui_data["bypass_iran"]
+        except:
+            bypass_iran = False
+        copy_paste = [
+            psg.Button("Copy", key="copy"),
+            psg.Button("Paste", key="paste"),
+        ]
+
+        c4 = [
+            psg.Button("Set", key="set_system_proxy"),
+            psg.Button("Reset", key="reset_system_proxy"),
+        ]
+        c5 = [
+            psg.Button("Save", key="save"),
+            psg.Button("Exit", key="exit"),
+        ]
+
+        checkboxes = psg.Column(
+            [
+                [
+                    psg.Checkbox(
+                        text="Bypass Iran to Local",
+                        key="bypass_iran",
+                        default=bypass_iran,
+                    )
+                ],
+                [
+                    psg.Checkbox(
+                        text="Use Fragmentation",
+                        key="use_fragmentation",
+                        default=default_use_fragmentation,
+                    )
+                ],
+            ]
+        )
+
+        row = [
+            psg.Frame("Copy Paste", [copy_paste], font=("", 9)),
+            psg.Frame("System Proxy", [c4]) if inside_windows() else [],
+            checkboxes,
+            psg.Frame("Exit", [c5]),
+        ]
+
+        return row
 
     def generate_Table(self):
         toprow, self.rows = self.referesh_table_content()
@@ -962,8 +986,10 @@ class MainGUI:
                 )
                 if not inside_windows():
                     config_file_path = config_file_path.replace("\\", "/")
-
-            self.connect_gost = ConnectGost(config_file_path, self.local_port)
+            self.bypass_iran = self.window["bypass_iran"].get()
+            self.connect_gost = ConnectGost(
+                config_file_path, self.local_port, self.bypass_iran
+            )
             self.connect_gost.connect()
 
         self.window["connection_name"].update(filename.replace(".json", ""))

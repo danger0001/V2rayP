@@ -11,7 +11,7 @@ from libs.in_win import config_path, inside_windows
 
 
 class ConnectGost:
-    def __init__(self, config_path, localport=8080) -> None:
+    def __init__(self, config_path, localport=8080, bypass_iran=False) -> None:
         self.config_path = config_path
         self.localport = localport
         self.sni = False
@@ -19,6 +19,7 @@ class ConnectGost:
         self.__profiler_reader()
         self.enable_loops = True
         self.gost_process = None
+        self.bypass_iran = bypass_iran
 
     def __profile_from_config_file(self):
         with open(self.config_path, "r") as json_file:
@@ -38,11 +39,16 @@ class ConnectGost:
 
     def __cmd_generator(self):
         bin_address = self.bin_address_generator()
+        iran = "*.filimo.*,*.ir,arvancdn.com,blubank.com,cedarmaps.com,digikalacloud.com,digikalajet.com,ebidar.com,farsimode.com,glorytoon.com,iranserver.com,ketaabonline.com,ketab.io,lioncomputer.com,livetabco.com,maryamsoft.com,mashadkala.com,mindupmarket.com,mipersia.com,nassaab.com,nassaabpro.com,persiangig.com,restfulsms.com,serveriran.net,snapp.taxi,streamg.tv,taaghche.com,taaghchecdn.com,taranevis.com,timcheh.com,tipaxco.com,turkeykala.com,upera.tv,ustclothing.com,virgool.io,parspack.com,rasm.io,pi.hole,bankino.digital,chapchi.com,quera.org,iranecar.com,netbarg.com,bale.ai,tourism-bank.com,hamrahcard.net,nextpay.org,takhfifan.com,aparatsport.com,rozmusic.com,farsgamer.com,farsgamerpay.com,fgtal.com,sedastore.com,pay98.app,zil.ink,salambaabaa.com,bazicenter.com"
 
         if not self.sni:
             cmd = f"{bin_address} -D -L=auto://0.0.0.0:{self.localport} -F={self.remote_protocol}://{self.remote_user}:{self.remote_password}@{self.remote_address}:{self.remote_port}"
+            if self.bypass_iran:
+                cmd = f'{cmd}?bypass="{iran}"'
         else:
             cmd = f'{bin_address} -D -L="auto://0.0.0.0:{self.localport}" -F="{self.remote_protocol}://{self.remote_user}:{self.remote_password}@:{self.remote_port}?host={self.sni}"'
+            if self.bypass_iran:
+                cmd = f'{cmd}&bypass="{iran}"'
         # else:
         #     if not self.sni:
         #         cmd = f"bin/mac/gost/igost -D -L=auto://0.0.0.0:{self.localport} -F={self.remote_protocol}://{self.remote_user}:{self.remote_password}@{self.remote_address}:{self.remote_port}"

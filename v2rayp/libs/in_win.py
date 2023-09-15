@@ -51,6 +51,7 @@ class FactorySetting:
     "selected_profile_name": "",
     "selected_profile_number": 0,
     "use_fragmentation": false,
+    "bypass_iran": false,
     "keep_top": false,
     "close_to_tray": false,
     "auto_connect": false,
