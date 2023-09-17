@@ -48,7 +48,9 @@ class ConnectGost:
         else:
             cmd = f'{bin_address} -D -L="auto://0.0.0.0:{self.localport}" -F="{self.remote_protocol}://{self.remote_user}:{self.remote_password}@:{self.remote_port}?host={self.sni}"'
             if self.bypass_iran:
-                cmd = f'{cmd}&bypass="{iran}"'
+                if cmd.endswith('"'):
+                    cmd = cmd[:-1]
+                cmd = f'{cmd}&bypass={iran}"'
         # else:
         #     if not self.sni:
         #         cmd = f"bin/mac/gost/igost -D -L=auto://0.0.0.0:{self.localport} -F={self.remote_protocol}://{self.remote_user}:{self.remote_password}@{self.remote_address}:{self.remote_port}"
