@@ -35,6 +35,7 @@ from libs.in_win import (
     pass_by_ref,
     reset_proxy_settings,
     set_socks5_proxy,
+    update_v2rayp,
 )
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
@@ -1243,69 +1244,72 @@ class MainGUI:
         )
 
         if resp == "OK":
-            self.window.disable()
+            # import multiprocessing
+
+            # a = pass_by_ref()
+            # a.value = False
+            # multiprocessing.Process(target=update_v2rayp, args=(a,)).start()
+            # while a.value == False:
+            #     time.sleep(1)
             self.disconnect()
+            update_v2rayp()
+            self.Exit()
 
-            cmd = f"{sys.executable} -m pip install --upgrade v2rayp"
-            print(cmd)
+            # self.disconnect()
+            # self.window.disable()
 
-            upgrade_window = psg.Window(
-                "Upgradig...",
-                [[psg.MLine(key="debug2", size=(50, 20), autoscroll=True)]],
-                finalize=True,
-                font=("", 9),
-                keep_on_top=True,
-            )
-            upgrade_window["debug2"].update("Upgrading...")
+            # self.window.disable()
+            # self.disconnect()
 
-            p = subprocess.Popen(
-                cmd,
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-            run = True
+            # cmd = f"{sys.executable} -m pip install --upgrade v2rayp"
+            # print(cmd)
 
-            def get_process_status():
-                nonlocal run
-                while True:
-                    time.sleep(1)
-                    run = p.poll() is None
-                    if run == False:
-                        break
+            # upgrade_window = psg.Window(
+            #     "Upgradig...",
+            #     [[psg.MLine(key="debug2", size=(50, 20), autoscroll=True)]],
+            #     finalize=True,
+            #     font=("", 9),
+            #     keep_on_top=True,
+            # )
+            # upgrade_window["debug2"].update("Upgrading...")
 
-            def update_inside():
-                nonlocal run
-                lines = ""
-                try:
-                    while run:
-                        line = p.stdout.readline().decode().strip()
-                        lines += line + "\n"
-                        upgrade_window["debug2"].update(lines)
-                        time.sleep(0.1)
-                    upgrade_window["debug2"].update(
-                        "Update Finished!\nPlease start again!"
-                    )
-                except:
-                    pass
+            # p = subprocess.Popen(
+            #     cmd,
+            #     shell=True,
+            #     stdout=subprocess.PIPE,
+            #     stderr=subprocess.PIPE,
+            # )
+            # run = True
 
-                time.sleep(1)
-                upgrade_window.close()
-                self.Exit()
+            # def get_process_status():
+            #     nonlocal run
+            #     while True:
+            #         time.sleep(1)
+            #         run = p.poll() is None
+            #         if run == False:
+            #             break
 
-            threading.Thread(target=get_process_status, daemon=True).start()
-            threading.Thread(target=update_inside, daemon=True).start()
-            # while True:
+            # def update_inside():
+            #     nonlocal run
+            #     lines = ""
             #     try:
-            #         event, _ = upgrade_window.read()
-            #         if (
-            #             event == psg.WINDOW_CLOSED
-            #         ):  # If the window is closed, exit the loop
-            #             self.window.enable()
+            #         while run:
+            #             line = p.stdout.readline().decode().strip()
+            #             lines += line + "\n"
+            #             upgrade_window["debug2"].update(lines)
+            #             time.sleep(0.1)
+            #         upgrade_window["debug2"].update(
+            #             "Update Finished!\nPlease start again!"
+            #         )
             #     except:
-            #         break
+            #         pass
 
-            # self.Exit()
+            #     time.sleep(1)
+            #     upgrade_window.close()
+            #     self.Exit()
+
+            # threading.Thread(target=get_process_status, daemon=True).start()
+            # threading.Thread(target=update_inside, daemon=True).start()
 
     def start_window(self):
         self.load_settings()

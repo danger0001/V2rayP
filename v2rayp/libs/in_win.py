@@ -1,5 +1,7 @@
 import os
 import platform
+import subprocess
+import sys
 import winreg
 
 import psutil
@@ -149,6 +151,21 @@ def beep():
 def beep_second():
     if os.name == "nt":
         winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS | winsound.SND_ASYNC)
+
+
+def update_v2rayp():
+    python_executable = sys.executable
+    print(python_executable)
+
+    command = f"{python_executable} -m pip install v2rayp --upgrade"
+    # command = f"{command}"
+    # command = command.split(" ")
+    # print(command)
+    # os.system(command)
+
+    p = subprocess.Popen(command, creationflags=subprocess.CREATE_NEW_CONSOLE)
+    p.communicate()
+    # a.value = True
 
 
 def check_process_exists(process_name):
