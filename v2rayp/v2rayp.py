@@ -149,6 +149,14 @@ class MainGUI:
                 size=(10, 2),
                 key="shortcut",
             ),
+            psg.Button(
+                "Shortcut to StartMenu",
+                font=(0, 7),
+                size=(10, 2),
+                key="shortcut_startmenu",
+            )
+            if inside_windows()
+            else [],
         ]
 
         row = [
@@ -1462,28 +1470,31 @@ class MainGUI:
                 reset_proxy_settings()
                 beep_second()
             ########################################
+            elif event == "shortcut_startmenu":
+                programdata = (
+                    os.popen("echo %programdata%").read().strip().replace("\n", "")
+                )
+                print(programdata)
+                try:
+                    os.makedirs(
+                        f"{programdata}\\Microsoft\\Windows\\Start Menu\\Programs\\V2RayP"
+                    )
+                except:
+                    pass
+                exec = sys.executable.replace("python.exe", "pythonw.exe")
+                exec = exec.replace("python3.exe", "pythonw.exe")
+                cmd2 = f'{current_dir}\\libs\\shortcut /t:{exec} /p:"-m v2rayp" /f:"%programdata%\\Microsoft\\Windows\\Start Menu\\Programs\\V2RayP\\V2rayP.lnk" /a:c  /I:{current_dir}\\assets\\icons\\appicon.ico'
+                os.popen(cmd2)
+                cmd3 = f'{current_dir}\\libs\\shortcut /t:cmd.exe /p:"/c {sys.executable} -m pip install v2rayp --upgrade" /f:"%programdata%\\Microsoft\\Windows\\Start Menu\\Programs\\V2RayP\\V2rayP_update.lnk" /a:c  /I:{current_dir}\\assets\\icons\\appicon.ico'
+                os.popen(cmd3)
+
             elif event == "shortcut":
                 if inside_windows():
                     exec = sys.executable.replace("python.exe", "pythonw.exe")
                     exec = exec.replace("python3.exe", "pythonw.exe")
-
-                    # pythonw_path = os.path.splitext(sys.executable)[0] + "w"
-
                     cmd = f'{current_dir}\\libs\\shortcut /t:{exec} /p:"-m v2rayp" /f:"%USERPROFILE%\\Desktop\\v2ray.lnk" /a:c  /I:{current_dir}\\assets\\icons\\appicon.ico'
                     os.popen(cmd)
-                    cmd2 = f'{current_dir}\\libs\\shortcut /t:cmd.exe /p:"/c {sys.executable} -m pip install v2rayp --upgrade" /f:"%USERPROFILE%\\Desktop\\v2ray_update.lnk" /a:c  /I:{current_dir}\\assets\\icons\\appicon.ico'
-                    os.popen(cmd2)
-                    # path = (
-                    #     os.popen(r"echo %userprofile%\\desktop\\v2rayp.cmd")
-                    #     .read()
-                    #     .strip()
-                    # )
 
-                    # exec = sys.executable.replace("python.exe", "pythonw.exe").replace(
-                    #     "python3.exe", "pythonw.exe"
-                    # )
-                    # with open(path, "w") as file:
-                    #     file.write(f"start /min {exec} -m v2rayp")
                 else:
                     userhome = os.path.expanduser("~")
                     path = userhome + "/Desktop"
