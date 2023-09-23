@@ -24,19 +24,8 @@ from libs.GUIs.SettingGUI import SettingGUI
 from libs.GUIs.TrojanGUI import TrojanGUI
 from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
-from libs.in_win import (
-    FactorySetting,
-    beep,
-    beep_second,
-    check_process_exists,
-    config_path,
-    download_xray_gost,
-    inside_windows,
-    pass_by_ref,
-    reset_proxy_settings,
-    set_socks5_proxy,
-    update_v2rayp,
-)
+from libs.in_win import FactorySetting, beep, beep_second, check_process_exists, config_path, download_xray_gost, \
+    inside_windows, pass_by_ref, reset_proxy_settings, set_socks5_proxy
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
 from libs.RefereshEditPage import RefereshEditPage
@@ -89,6 +78,7 @@ class MainGUI:
         self.referesh_terminal_period = 1
         self.thrd_check_connection = None
         self.enable_loops = False
+        self.updating = False
         threading.Thread(target=self._update_debug, daemon=True).start()
 
     def cpulimit(self):
@@ -1118,6 +1108,7 @@ class MainGUI:
         self.enable_loops = False
         self.disconnect()
         self.window.close()
+
         # os.popen(f"taskkill /f /PID {os.getpid()}")
         import signal
 
@@ -1244,72 +1235,59 @@ class MainGUI:
         )
 
         if resp == "OK":
-            # import multiprocessing
-
-            # a = pass_by_ref()
-            # a.value = False
-            # multiprocessing.Process(target=update_v2rayp, args=(a,)).start()
-            # while a.value == False:
-            #     time.sleep(1)
+            self.updating = True
             self.disconnect()
-            update_v2rayp()
-            self.Exit()
 
-            # self.disconnect()
-            # self.window.disable()
+            cmd = f"{sys.executable} -m pip install --upgrade v2rayp"
+            print(cmd)
 
-            # self.window.disable()
-            # self.disconnect()
+            upgrade_window = psg.Window(
+                "Upgradig...",
+                [[psg.MLine(key="debug2", size=(50, 20), autoscroll=True)]],
+                finalize=True,
+                font=("", 9),
+                keep_on_top=True,
+            )
+            upgrade_window["debug2"].update("Upgrading...")
 
-            # cmd = f"{sys.executable} -m pip install --upgrade v2rayp"
-            # print(cmd)
+            p = subprocess.Popen(
+                cmd,
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            run = True
 
-            # upgrade_window = psg.Window(
-            #     "Upgradig...",
-            #     [[psg.MLine(key="debug2", size=(50, 20), autoscroll=True)]],
-            #     finalize=True,
-            #     font=("", 9),
-            #     keep_on_top=True,
-            # )
-            # upgrade_window["debug2"].update("Upgrading...")
+            def get_process_status():
+                nonlocal run
+                while True:
+                    time.sleep(1)
+                    run = p.poll() is None
+                    if run == False:
+                        break
 
-            # p = subprocess.Popen(
-            #     cmd,
-            #     shell=True,
-            #     stdout=subprocess.PIPE,
-            #     stderr=subprocess.PIPE,
-            # )
-            # run = True
+            def update_inside():
+                nonlocal run
+                lines = ""
+                try:
+                    while run:
+                        line = p.stdout.readline().decode().strip()
+                        lines += line + "\n"
+                        upgrade_window["debug2"].update(lines)
+                        time.sleep(0.1)
+                    upgrade_window["debug2"].update(
+                        "Update Finished!\nPlease start again!"
+                    )
+                    self.updating = False
+                except:
+                    pass
 
-            # def get_process_status():
-            #     nonlocal run
-            #     while True:
-            #         time.sleep(1)
-            #         run = p.poll() is None
-            #         if run == False:
-            #             break
+                time.sleep(1)
+                upgrade_window.close()
+                self.Exit()
 
-            # def update_inside():
-            #     nonlocal run
-            #     lines = ""
-            #     try:
-            #         while run:
-            #             line = p.stdout.readline().decode().strip()
-            #             lines += line + "\n"
-            #             upgrade_window["debug2"].update(lines)
-            #             time.sleep(0.1)
-            #         upgrade_window["debug2"].update(
-            #             "Update Finished!\nPlease start again!"
-            #         )
-            #     except:
-            #         pass
-
-            #     time.sleep(1)
-            #     upgrade_window.close()
-            #     self.Exit()
-
-            # threading.Thread(target=get_process_status, daemon=True).start()
-            # threading.Thread(target=update_inside, daemon=True).start()
+            threading.Thread(target=get_process_status, daemon=True).start()
+            threading.Thread(target=update_inside, daemon=True).start()
 
     def start_window(self):
         self.load_settings()
@@ -1345,8 +1323,14 @@ class MainGUI:
                 if event == self.tray.key:
                     event = values[event]
             ##################
-            if event in ("exit", "Exit", psg.WIN_CLOSED):
+            if event in ("exit", "Exit"):  # , psg.WIN_CLOSED):
                 break
+
+            if event == psg.WIN_CLOSED:
+                while self.updating:
+                    time.sleep(1)
+                break
+
             elif event == "save":
                 self.save_gui()
 
@@ -1487,6 +1471,8 @@ class MainGUI:
 
                     cmd = f'{current_dir}\\libs\\shortcut /t:{exec} /p:"-m v2rayp" /f:"%USERPROFILE%\\Desktop\\v2ray.lnk" /a:c  /I:{current_dir}\\assets\\icons\\appicon.ico'
                     os.popen(cmd)
+                    cmd2 = f'{current_dir}\\libs\\shortcut /t:cmd.exe /p:"/c {sys.executable} -m pip install v2rayp --upgrade" /f:"%USERPROFILE%\\Desktop\\v2ray_update.lnk" /a:c  /I:{current_dir}\\assets\\icons\\appicon.ico'
+                    os.popen(cmd2)
                     # path = (
                     #     os.popen(r"echo %userprofile%\\desktop\\v2rayp.cmd")
                     #     .read()
