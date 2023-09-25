@@ -24,8 +24,18 @@ from libs.GUIs.SettingGUI import SettingGUI
 from libs.GUIs.TrojanGUI import TrojanGUI
 from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
-from libs.in_win import FactorySetting, beep, beep_second, check_process_exists, config_path, download_xray_gost, \
-    inside_windows, pass_by_ref, reset_proxy_settings, set_socks5_proxy
+from libs.in_win import (
+    FactorySetting,
+    beep,
+    beep_second,
+    check_process_exists,
+    config_path,
+    download_xray_gost,
+    inside_windows,
+    pass_by_ref,
+    reset_proxy_settings,
+    set_socks5_proxy,
+)
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
 from libs.RefereshEditPage import RefereshEditPage
@@ -107,66 +117,6 @@ class MainGUI:
                 # print(cmd)
                 res = os.popen(cmd).read()
                 print(res)
-
-    def _generate_layout(self):
-        self.layout = [
-            [self.generate_menu()],
-            [self.generate_top_part()],
-            [self.generate_middle_part()],
-            [self.generate_bottom_row()],
-            [self.generate_Table()],
-            [self.generate_ConsoleBox()],
-            [[psg.ProgressBar(max_value=100, key="progressbar", size=(100, 10))]],
-        ]
-
-    def generate_top_part(self):
-        c1 = [
-            psg.Text(
-                "disconnected",
-                key="connection_name",
-                text_color="purple",
-                justification="center",
-                size=(20, 1),
-                auto_size_text=False,
-                background_color="yellow",
-            ),
-        ]
-        c2 = [
-            psg.Input(
-                default_text=self.gui_data["subscription"]
-                if "subscription" in self.gui_data
-                else "",
-                key="subscription",
-                size=(25),
-            ),
-            psg.Button("Update Subscription", key="update_subscription"),
-            psg.Button("Delete Subscription", key="delete_subscription"),
-        ]
-        c3 = [
-            psg.Button(
-                "Shortcut to Desktop",
-                font=(0, 8),
-                size=(10, 2),
-                key="shortcut",
-            ),
-            psg.Button(
-                "Shortcut to StartMenu",
-                font=(0, 7),
-                size=(10, 2),
-                key="shortcut_startmenu",
-            )
-            if inside_windows()
-            else [],
-        ]
-
-        row = [
-            [
-                psg.Frame("Current Connction", [c1]),
-                psg.Frame("Subscription", [c2]),
-                psg.Frame("Shortcut", [c3]),
-            ],
-        ]
-        return row
 
     def _generate_tray(self):
         self.menu = [
@@ -369,6 +319,49 @@ class MainGUI:
         ]
         return psg.Menu(menu_def)
 
+    def _generate_layout(self):
+        self.layout = [
+            [self.generate_menu()],
+            [self.generate_top_part()],
+            [self.generate_middle_part()],
+            [self.generate_bottom_row()],
+            [self.generate_Table()],
+            [self.generate_ConsoleBox()],
+            [[psg.ProgressBar(max_value=100, key="progressbar", size=(100, 10))]],
+        ]
+
+    def generate_top_part(self):
+        c1 = [
+            psg.Text(
+                "disconnected",
+                key="connection_name",
+                text_color="purple",
+                justification="center",
+                size=(20, 1),
+                auto_size_text=False,
+                background_color="yellow",
+            ),
+        ]
+        c2 = [
+            psg.Input(
+                default_text=self.gui_data["subscription"]
+                if "subscription" in self.gui_data
+                else "",
+                key="subscription",
+                size=(25),
+            ),
+            psg.Button("Update Subscription", key="update_subscription"),
+            psg.Button("Delete Subscription", key="delete_subscription"),
+        ]
+
+        row = [
+            [
+                psg.Frame("Current Connction", [c1]),
+                psg.Frame("Subscription", [c2]),
+            ],
+        ]
+        return row
+
     def generate_middle_part(self):
         conn = [
             psg.Button("(Re)Connect", key="connect"),
@@ -417,6 +410,24 @@ class MainGUI:
             psg.Button("Set", key="set_system_proxy"),
             psg.Button("Reset", key="reset_system_proxy"),
         ]
+
+        c3 = [
+            psg.Button(
+                "Shortcut to Desktop",
+                font=(0, 8),
+                size=(10, 2),
+                key="shortcut",
+            ),
+            psg.Button(
+                "Shortcut to StartMenu",
+                font=(0, 7),
+                size=(10, 2),
+                key="shortcut_startmenu",
+            )
+            if inside_windows()
+            else [],
+        ]
+
         c5 = [
             psg.Button("Save", key="save"),
             psg.Button("Exit", key="exit"),
@@ -445,6 +456,7 @@ class MainGUI:
             psg.Frame("Copy Paste", [copy_paste], font=("", 9)),
             psg.Frame("System Proxy", [c4]) if inside_windows() else [],
             checkboxes,
+            psg.Frame("Shortcut", [c3]),
             psg.Frame("Exit", [c5]),
         ]
 

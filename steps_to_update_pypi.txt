@@ -6,4 +6,3 @@ rmdir /q /s  V2RayP.egg-info
 python3 setup.py sdist
 
 python3  -m twine upload dist/*
-
