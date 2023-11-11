@@ -2,6 +2,7 @@ import os
 import platform
 import subprocess
 import sys
+import threading
 import winreg
 
 import psutil
@@ -67,6 +68,43 @@ class FactorySetting:
 
 
 tmp = temp()
+
+
+def download_module(bin_name):
+    import PySimpleGUI as psg
+
+    print("*************************")
+    print("Disconnected to download.")
+    progressbar_window = None
+    layout = [
+        [psg.ProgressBar(100, key="progressbar2", size=(35, 20))],
+        [psg.Text(key="percentage")],
+        [psg.Button("Cancel")],
+    ]
+
+    progressbar_window = psg.Window(
+        f"Downloading {bin_name}...", layout=layout, keep_on_top=True, finalize=True
+    )
+
+    enable_download = pass_by_ref()
+    enable_download.value = True
+
+    threading.Thread(
+        target=download_xray_gost,
+        args=(progressbar_window, enable_download, bin_name),
+    ).start()
+    while True:
+        event, values = progressbar_window.read(timeout=2000)
+        if (
+            event in (None, "Cancel", psg.WIN_CLOSED)
+            or "100" in progressbar_window["percentage"].get()
+        ):
+            enable_download.value = False
+            print(enable_download.value)
+            progressbar_window.close()
+
+            break
+    progressbar_window.close()
 
 
 def download_xray_gost(window, enable_download: pass_by_ref, filename):

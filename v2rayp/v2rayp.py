@@ -1,6 +1,7 @@
 import base64
 import io
 import json
+import multiprocessing
 import os
 import subprocess
 import sys
@@ -30,6 +31,7 @@ from libs.in_win import (
     beep_second,
     check_process_exists,
     config_path,
+    download_module,
     download_xray_gost,
     inside_windows,
     pass_by_ref,
@@ -922,7 +924,7 @@ class MainGUI:
                 )
 
                 if answer:
-                    self.download_module("xray")
+                    self.download_the_module("xray")
                     # threading.Thread(target=self.download_xray, daemon=True).start()
                     return
         else:
@@ -937,7 +939,7 @@ class MainGUI:
                 )
 
                 if answer:
-                    self.download_module("gost")
+                    self.download_the_module("gost")
                     return
         #######################################
         use_fragmentation = bool(self.window["use_fragmentation"].get())
@@ -1215,38 +1217,44 @@ class MainGUI:
         except:
             pass
 
-    def download_module(self, bin_name):
+    def download_the_module(self, bin_name):
         self.disconnect()
-        print("*************************")
-        print("Disconnected to download.")
-        self.progressbar_window = None
-        layout = [
-            [psg.ProgressBar(100, key="progressbar2", size=(35, 20))],
-            [psg.Text(key="percentage")],
-            [psg.Button("Cancel")],
-        ]
-        self.progressbar_window = psg.Window(
-            f"Downloading {bin_name}...", layout=layout, keep_on_top=True, finalize=True
-        )
-        enable_download = pass_by_ref()
-        enable_download.value = True
+        multiprocessing.Process(target=download_module, args=(bin_name,)).start()
+        # download_module
+        # print("*************************")
+        # print("Disconnected to download.")
+        # self.progressbar_window = None
+        # layout = [
+        #     [psg.ProgressBar(100, key="progressbar2", size=(35, 20))],
+        #     [psg.Text(key="percentage")],
+        #     [psg.Button("Cancel")],
+        # ]
 
-        threading.Thread(
-            target=download_xray_gost,
-            args=(self.progressbar_window, enable_download, bin_name),
-        ).start()
-        while True:
-            event, values = self.progressbar_window.read(timeout=2000)
-            if (
-                event in (None, "Cancel", psg.WIN_CLOSED)
-                or "100" in self.progressbar_window["percentage"].get()
-            ):
-                enable_download.value = False
-                print(enable_download.value)
-                self.progressbar_window.close()
+        # self.progressbar_window = psg.Window(
+        #     f"Downloading {bin_name}...",
+        #     layout=layout,
+        #     keep_on_top=True,
+        # )
+        # self.progressbar_window.finalize()
+        # enable_download = pass_by_ref()
+        # enable_download.value = True
 
-                break
-        self.progressbar_window.close()
+        # threading.Thread(
+        #     target=download_xray_gost,
+        #     args=(self.progressbar_window, enable_download, bin_name),
+        # ).start()
+        # while True:
+        #     event, values = self.progressbar_window.read(timeout=2000)
+        #     if (
+        #         event in (None, "Cancel", psg.WIN_CLOSED)
+        #         or "100" in self.progressbar_window["percentage"].get()
+        #     ):
+        #         enable_download.value = False
+        #         print(enable_download.value)
+        #         self.progressbar_window.close()
+
+        #         break
+        # self.progressbar_window.close()
 
     def upgrade_v2rayp(self):
         resp = psg.popup_ok_cancel(
@@ -1466,14 +1474,23 @@ class MainGUI:
                 )
                 if resp == "No":
                     continue
-                self.download_module("xray")
+                # process = multiprocessing.Process(
+                #     target=self.download_module, args=("xray")
+                # )
+                # process.start()
+                self.download_the_module("xray")
             elif event == "Download Gost":
                 resp = psg.popup_yes_no(
                     "Are you sure you want to download?", keep_on_top=True
                 )
                 if resp == "No":
                     continue
-                self.download_module("gost")
+
+                # process = multiprocessing.Process(
+                #     target=self.download_module, args=("gost")
+                # )
+                # process.start()
+                self.download_the_module("gost")
             ###################################
             elif event == "set_system_proxy" or event == "Set System Proxy":
                 set_socks5_proxy("127.0.0.1", self.local_port)
