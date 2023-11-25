@@ -15,6 +15,7 @@ import psutil
 import pyperclip
 import PySimpleGUI as psg
 from __version__ import __version__
+from libs.Chisel_Interface import Chisel_Interface
 from libs.ConnectGost import ConnectGost
 from libs.ConnectV2Ray import ConnectV2Ray
 from libs.ExportURLfromConfig import ExportURLfromConfig
@@ -81,6 +82,7 @@ class MainGUI:
         self.connectv2ray = None
         self.GFW_port = 2500
         self.gfw_interface = None
+        self.chisel_interface = None
         self.thrd_check_connection = False
         self.thread_exit = None
         self.first_minimized = True
@@ -451,6 +453,13 @@ class MainGUI:
                         default=default_use_fragmentation,
                     )
                 ],
+                [
+                    psg.Checkbox(
+                        text="Use Chisel",
+                        key="use_chisel",
+                        default=False,
+                    )
+                ],
             ]
         )
 
@@ -631,6 +640,15 @@ class MainGUI:
             int(self.settings["segmentation_timeout"]),
         )
 
+    def run_Chisel(self):
+        if self.chisel_interface:
+            self.chisel_interface.stop()
+        self.chisel_interface = Chisel_Interface(
+            self.GFW_port,
+            self.settings["cloudflare_address"],
+            self.cloudflare_port,
+        )
+
     def config2url(self, sel):
         filename = str(self.rows_dict[sel]["remark"])
         protocol = str(self.rows_dict[sel]["protocol"])
@@ -705,6 +723,9 @@ class MainGUI:
     def disconnect(self):
         if self.gfw_interface:
             self.gfw_interface.stop()
+
+        if self.chisel_interface:
+            self.chisel_interface.stop()
 
         self.enable_loops = False
         try:
@@ -960,6 +981,8 @@ class MainGUI:
             if not answer:
                 return
 
+        use_chisel = bool(self.window["use_chisel"].get())
+
         if protocol in ("vless", "vmess", "trojan"):  # using v2ray
             #####################
             if len(group) >= 1:
@@ -975,6 +998,16 @@ class MainGUI:
             if use_fragmentation:
                 self.make_fragmentation_config_v2ray(config_file_path)
                 self.run_GFW()
+                config_file_path = (
+                    f"{config_path()}\\v2ray_profiles\\fragment\\temp.json"
+                )
+                if not inside_windows():
+                    config_file_path = config_file_path.replace("\\", "/")
+
+            elif use_chisel:
+                print("Chisel is selected")
+                self.make_fragmentation_config_v2ray(config_file_path)
+                self.run_Chisel()
                 config_file_path = (
                     f"{config_path()}\\v2ray_profiles\\fragment\\temp.json"
                 )
