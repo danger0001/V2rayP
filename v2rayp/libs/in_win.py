@@ -56,6 +56,7 @@ class FactorySetting:
     "use_fragmentation": false,
     "bypass_iran": false,
     "keep_top": false,
+    "use_chisel": false,
     "close_to_tray": false,
     "auto_connect": false,
     "start_minimized": false,

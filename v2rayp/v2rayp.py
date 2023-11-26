@@ -248,6 +248,7 @@ class MainGUI:
             try:
                 self.gui_data["local_port"] = self.window["local_port"].get()
                 self.gui_data["use_fragmentation"] = use_fragmentation
+                self.gui_data["use_chisel"] = bool(self.window["use_chisel"].get())
                 self.gui_data["subscription"] = self.window["subscription"].get()
             except:
                 print("Cannot save gui.")
@@ -402,6 +403,11 @@ class MainGUI:
             default_use_fragmentation = self.gui_data["use_fragmentation"]
         except:
             default_use_fragmentation = False
+
+        try:
+            default_use_chisel = self.gui_data["use_chisel"]
+        except:
+            default_use_chisel = False
         try:
             bypass_iran = self.gui_data["bypass_iran"]
         except:
@@ -458,7 +464,7 @@ class MainGUI:
                     psg.Checkbox(
                         text="Use Chisel",
                         key="use_chisel",
-                        default=False,
+                        default=default_use_chisel,
                     )
                 ],
             ]
