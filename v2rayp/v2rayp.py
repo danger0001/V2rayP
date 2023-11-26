@@ -309,6 +309,7 @@ class MainGUI:
                 [
                     "Download Xray",
                     "Download Gost",
+                    "Download Chisel",
                     "Download SingBox",
                 ],
             ],
@@ -1524,6 +1525,18 @@ class MainGUI:
                 # )
                 # process.start()
                 self.download_the_module("gost")
+            elif event == "Download Chisel":
+                resp = psg.popup_yes_no(
+                    "Are you sure you want to download?", keep_on_top=True
+                )
+                if resp == "No":
+                    continue
+
+                # process = multiprocessing.Process(
+                #     target=self.download_module, args=("gost")
+                # )
+                # process.start()
+                self.download_the_module("chisel")
             ###################################
             elif event == "set_system_proxy" or event == "Set System Proxy":
                 set_socks5_proxy("127.0.0.1", self.local_port)

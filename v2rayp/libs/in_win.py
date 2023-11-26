@@ -132,6 +132,18 @@ def download_xray_gost(window, enable_download: pass_by_ref, filename):
             url = (
                 "https://github.com/iblockchaincyberchain/v2rayp_bin/raw/main/mac/gost"
             )
+    elif filename == "chisel":
+        if platform.system() == "Windows":
+            url = "https://github.com/iblockchaincyberchain/v2rayp_bin/raw/main/win/chisel.exe"
+            filename = "chisel.exe"
+
+        elif platform.system() == "Linux":
+            # url = "https://github.com/iblockchaincyberchain/v2rayp_bin/raw/main/linux/gost"
+            return
+
+        elif platform.system() == "Darwin":
+            # url = (                "https://github.com/iblockchaincyberchain/v2rayp_bin/raw/main/mac/gost")
+            return
 
     download_binary(url, filename, window, enable_download)
 

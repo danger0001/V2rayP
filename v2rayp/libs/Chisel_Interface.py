@@ -8,7 +8,7 @@ from threading import Thread
 
 sys.path.append("D:\\Codes\\V2rayP\\v2rayp\\libs")
 
-from in_win import config_path, inside_windows
+from libs.in_win import config_path, inside_windows
 
 # from .in_win import config_path, inside_windows
 
