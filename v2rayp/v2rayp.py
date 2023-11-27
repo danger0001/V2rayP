@@ -33,9 +33,7 @@ from libs.in_win import (
     check_process_exists,
     config_path,
     download_module,
-    download_xray_gost,
     inside_windows,
-    pass_by_ref,
     reset_proxy_settings,
     set_socks5_proxy,
 )
@@ -210,9 +208,6 @@ class MainGUI:
                         print("Error in terminal 731: ", str(e))
                 time.sleep(1)
 
-    def _getLayout(self) -> list:
-        return self.layout
-
     def load_settings(self):
         path = f"{config_path()}\\gui\\config.json"
         if not inside_windows():
@@ -264,14 +259,20 @@ class MainGUI:
                 self.gui_data["close_to_tray"] = self.settings["close_to_tray"]
                 self.gui_data["auto_connect"] = self.settings["auto_connect"]
                 self.gui_data["start_minimized"] = self.settings["start_minimized"]
-                self.gui_data["cloudflare_address"] = self.settings[
-                    "cloudflare_address"
-                ]
+
                 self.gui_data["segmentation_timeout"] = self.settings[
                     "segmentation_timeout"
                 ]
                 self.gui_data["num_of_fragments"] = self.settings["num_of_fragments"]
                 self.gui_data["bypass_iran"] = self.window["bypass_iran"].get()
+
+                self.gui_data["chisel_address"] = self.window["chisel_address"].get()
+                self.gui_data["chisel_port"] = self.window["chisel_port"].get()
+
+                self.gui_data["cloudflare_address"] = self.window[
+                    "cloudflare_address"
+                ].get()
+                self.gui_data["close_to_tray"] = self.window["close_to_tray"].get()
 
             except Exception as e:
                 print("Cannot save gui.")
@@ -326,15 +327,35 @@ class MainGUI:
         return psg.Menu(menu_def)
 
     def _generate_layout(self):
-        self.layout = [
-            [self.generate_menu()],
-            [self.generate_top_part()],
-            [self.generate_middle_part()],
-            [self.generate_bottom_row()],
-            [self.generate_Table()],
-            [self.generate_ConsoleBox()],
-            [[psg.ProgressBar(max_value=100, key="progressbar", size=(100, 10))]],
+        tab1 = [
+            self.generate_top_part(),
+            self.generate_middle_part(),
         ]
+
+        tab2 = SettingGUI(self.gui_data).getLayout()
+        layout = [
+            [
+                [self.generate_menu()],
+                [
+                    psg.TabGroup(
+                        [
+                            [
+                                psg.Tab("Basic Info", tab1),
+                                psg.Tab("Segmentation Settings", tab2[6]),
+                                psg.Tab("Chisel Settings", tab2[8]),
+                                psg.Tab("GUI Settings", tab2[2]),
+                            ]
+                        ]
+                    )
+                ],
+                [self.generate_bottom_row()],
+                [self.generate_Table()],
+                [self.generate_ConsoleBox()],
+                [psg.ProgressBar(max_value=100, key="progressbar", size=(100, 10))],
+            ]
+        ]
+
+        self.layout = layout
 
     def generate_top_part(self):
         c1 = [
@@ -361,11 +382,10 @@ class MainGUI:
         ]
 
         row = [
-            [
-                psg.Frame("Current Connction", [c1]),
-                psg.Frame("Subscription", [c2]),
-            ],
+            psg.Frame("Current Connction", [c1]),
+            psg.Frame("Subscription", [c2]),
         ]
+
         return row
 
     def generate_middle_part(self):
@@ -444,38 +464,44 @@ class MainGUI:
             psg.Button("Exit", key="exit"),
         ]
 
-        checkboxes = psg.Column(
+        checkboxes = [
             [
-                [
-                    psg.Checkbox(
-                        text="Bypass Iran to Local",
-                        key="bypass_iran",
-                        default=bypass_iran,
-                    )
-                ],
-                [
-                    psg.Checkbox(
-                        text="Use Fragmentation",
-                        key="use_fragmentation",
-                        default=default_use_fragmentation,
-                    )
-                ],
-                [
-                    psg.Checkbox(
-                        text="Use Chisel",
-                        key="use_chisel",
-                        default=default_use_chisel,
-                    )
-                ],
-            ]
-        )
+                psg.Checkbox(
+                    text="Bypass Iran to Local",
+                    key="bypass_iran",
+                    default=bypass_iran,
+                )
+            ],
+            [
+                psg.Checkbox(
+                    text="Use Fragmentation",
+                    key="use_fragmentation",
+                    default=default_use_fragmentation,
+                )
+            ],
+            [
+                psg.Checkbox(
+                    text="Use Chisel",
+                    key="use_chisel",
+                    default=default_use_chisel,
+                )
+            ],
+        ]
 
         row = [
-            psg.Frame("Copy Paste", [copy_paste], font=("", 9)),
-            psg.Frame("System Proxy", [c4]) if inside_windows() else [],
-            checkboxes,
-            psg.Frame("Shortcut", [c3]),
-            psg.Frame("Exit", [c5]),
+            psg.Column([[psg.Frame("CheckBoxes", checkboxes)]]),
+            psg.Column(
+                [
+                    [psg.Frame("Copy Paste", [copy_paste], font=("", 9))],
+                    [psg.Frame("System Proxy", [c4]) if inside_windows() else []],
+                ]
+            ),
+            psg.Column(
+                [
+                    [psg.Frame("Shortcut", [c3])],
+                    [psg.Frame("Exit", [c5])],
+                ]
+            ),
         ]
 
         return row
@@ -582,7 +608,7 @@ class MainGUI:
             print("connection checking...")
 
             self.isConnected = NetTools.is_connected_to_internet(
-                "http://www.msn.com/", int(self.local_port)
+                "http://www.msn.com", int(self.local_port)
             )
             if inside_windows():
                 try:
@@ -1215,20 +1241,37 @@ class MainGUI:
         # psg.popup_ok(string_about, title="About")
 
     def init_window(self):
-        layout = self._getLayout()
+        layout = self.layout
+
+        # layout = [
+        #     [
+        #         psg.TabGroup(
+        #             [
+        #                 [
+        #                     psg.Tab("Basic Info", layout),
+        #                     psg.Tab("Contact Details", []),
+        #                 ]
+        #             ]
+        #         )
+        #     ]
+        # ]
+
         self.cloudflare_ip = self.settings["cloudflare_address"]
         keep_on_top = self.settings["keep_top"]
+        # psg.set_options(scaling=1.5)
+
         self.window = psg.Window(
             "V2rayP",
             icon="assets/icons/appicon.ico",
             layout=layout,
-            size=(width, 600),
+            size=(1000, 800),
             resizable=True,
             # no_titlebar=True,
             finalize=True,
             grab_anywhere=True,
             keep_on_top=keep_on_top,
         )
+
         self.root_of_windows = self.window.TKroot
 
         def copy(temp):
@@ -1484,6 +1527,9 @@ class MainGUI:
             elif event == "update_subscription":
                 if Subscriptions(values["subscription"]).make_subscription():
                     _, rows = self.referesh_table_content()
+                    if len(rows) < 1:
+                        break
+
                     self.window["-TABLE-"].update(
                         rows, select_rows=[self.selected_profile_number]
                     )

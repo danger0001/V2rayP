@@ -15,6 +15,8 @@ page_data["auto_connect"] = False
 page_data["start_minimized"] = False
 page_data["cloudflare_address"] = "bruce.ns.cloudflare.com"
 page_data["cloudflare_port"] = "2087"
+page_data["chisel_address"] = ""
+page_data["chisel_port"] = ""
 page_data["segmentation_timeout"] = 5
 page_data["num_of_fragments"] = 100
 page_data["beep"] = True
@@ -24,13 +26,17 @@ class SettingGUI:
     def __init__(self, page_data=page_data) -> None:
         self.settings = page_data
         self.layout = [
-            [self.generate_top_parts()],
+            [psg.Text("Settings", justification="center", font=("Arial Bold", 18))],
             [psg.HorizontalSeparator()],
-            [self.factory_reset_layout()],
+            self.generate_top_parts(),
             [psg.HorizontalSeparator()],
-            [self.generate_middle_parts()],
+            self.factory_reset_layout(),
             [psg.HorizontalSeparator()],
-            [self.generate_buttons()],
+            self.generate_cloudflare_part(),
+            [psg.HorizontalSeparator()],
+            self.generate_chisel_part(),
+            [psg.HorizontalSeparator()],
+            self.generate_buttons(),
         ]
 
     def getLayout(self) -> list:
@@ -39,6 +45,7 @@ class SettingGUI:
     def factory_reset_layout(self):
         row = [
             [psg.Text("Factory Reset:", font=("Arial Bold", 14))],
+            [psg.Button("Factory Reset", key="factory")],
             [
                 psg.Checkbox(
                     "Factory:\t\t",
@@ -51,8 +58,6 @@ class SettingGUI:
 
     def generate_top_parts(self):
         layout = [
-            [psg.Text("Settings", justification="center", font=("Arial Bold", 18))],
-            [psg.HorizontalSeparator()],
             [
                 psg.Text("Beep:\t"),
                 psg.Checkbox(
@@ -63,7 +68,6 @@ class SettingGUI:
             ],
             [psg.HorizontalSeparator()],
             [psg.Text("Configs:", font=("Arial Bold", 14))],
-            [psg.Button("Factory Reset", key="factory")],
             [
                 psg.Checkbox(
                     "Minimize to tray on close:\t\t",
@@ -88,7 +92,7 @@ class SettingGUI:
         ]
         return layout
 
-    def generate_middle_parts(self):
+    def generate_cloudflare_part(self):
         layout = [
             [psg.Text("Segmentation Settings:", font=("Arial Bold", 14))],
             [
@@ -99,14 +103,6 @@ class SettingGUI:
                     size=(20, 10),
                 ),
             ],
-            # [
-            #     psg.Text("Cloudflare Port:\t\t"),
-            #     psg.InputText(
-            #         size=(20, 10),
-            #         default_text=self.settings["cloudflare_port"],
-            #         key="cloudflare_port",
-            #     ),
-            # ],
             [
                 psg.Text("Segmentation Timeout:\t"),
                 psg.InputText(
@@ -126,6 +122,28 @@ class SettingGUI:
         ]
         return layout
 
+    def generate_chisel_part(self):
+        layout = [
+            [psg.Text("Chisel Settings:", font=("Arial Bold", 14))],
+            [
+                psg.Text("Chisel Address:\t"),
+                psg.InputText(
+                    default_text=self.settings["chisel_address"],
+                    key="chisel_address",
+                    size=(20, 10),
+                ),
+            ],
+            [
+                psg.Text("Chseil Port:\t"),
+                psg.InputText(
+                    size=(20, 10),
+                    default_text=self.settings["chisel_port"],
+                    key="chisel_port",
+                ),
+            ],
+        ]
+        return layout
+
     def generate_buttons(self):
         layout = [
             psg.Button(key="confirm", button_text="Confirm"),
@@ -139,11 +157,13 @@ class SettingGUI:
         self.settings["auto_connect"] = self.window["auto_connect"].get()
         self.settings["start_minimized"] = self.window["start_minimized"].get()
         self.settings["cloudflare_address"] = self.window["cloudflare_address"].get()
-        # self.settings["cloudflare_port"] = self.window["cloudflare_port"].get()
         self.settings["num_of_fragments"] = self.window["num_of_fragments"].get()
         self.settings["segmentation_timeout"] = self.window[
             "segmentation_timeout"
         ].get()
+
+        self.settings["chisel_address"] = self.window["chisel_address"].get()
+        self.settings["chisel_port"] = self.window["chisel_port"].get()
         self.settings["beep"] = self.window["beep"].get()
 
     def close(self):

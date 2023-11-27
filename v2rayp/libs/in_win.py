@@ -61,9 +61,12 @@ class FactorySetting:
     "auto_connect": false,
     "start_minimized": false,
     "cloudflare_address": "bruce.ns.cloudflare.com",
+    "chisel_address": "",
+    "chisel_port": "8080",
     "segmentation_timeout": "5",
     "num_of_fragments": "77",
     "subscription": "",
+    "close_to_tray" : false,
     "beep": true
 }"""
 

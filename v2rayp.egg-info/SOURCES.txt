@@ -44,6 +44,7 @@ v2rayp/configs/v2ray_profiles/subscriptions/isharifi_codes_v2ray/trojan-grpc-r85
 v2rayp/configs/v2ray_profiles/subscriptions/isharifi_codes_v2ray/trojan1-xjiqhd.json
 v2rayp/configs/v2ray_profiles/subscriptions/isharifi_codes_v2ray/vless-grpc-reality.json
 v2rayp/configs/v2ray_profiles/subscriptions/isharifi_codes_v2ray/vmess_notls-p0unzh3.json
+v2rayp/libs/Chisel_Interface.py
 v2rayp/libs/ConnectGost.py
 v2rayp/libs/ConnectV2Ray.py
 v2rayp/libs/ExportURLfromConfig.py
