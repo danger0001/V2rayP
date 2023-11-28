@@ -91,7 +91,7 @@ class MainGUI:
         self.thrd_check_connection = None
         self.enable_loops = False
         self.updating = False
-        threading.Thread(target=self._update_debug, daemon=True).start()
+        # threading.Thread(target=self._update_debug, daemon=True).start()
 
     def cpulimit(self):
         # Get the current process ID
@@ -666,21 +666,23 @@ class MainGUI:
         if self.gfw_interface:
             self.gfw_interface.stop()
         self.gfw_interface = GFW_Interface(
-            int(self.settings["num_of_fragments"]),
+            int(self.window["num_of_fragments"].get()),
             self.GFW_port,
-            self.settings["cloudflare_address"],
+            self.window["cloudflare_address"].get(),
             self.cloudflare_port,
-            int(self.settings["segmentation_timeout"]),
+            int(self.window["segmentation_timeout"].get()),
         )
 
-    def run_Chisel(self):
+    def run_Chisel(self, port):
         if self.chisel_interface:
             self.chisel_interface.stop()
         self.chisel_interface = Chisel_Interface(
             self.GFW_port,
-            self.settings["cloudflare_address"],
-            self.cloudflare_port,
+            self.window["chisel_address"].get(),
+            self.window["chisel_port"].get(),
+            port,
         )
+        self.GFW_port = self.GFW_port + 1
 
     def config2url(self, sel):
         filename = str(self.rows_dict[sel]["remark"])
@@ -1039,8 +1041,8 @@ class MainGUI:
 
             elif use_chisel:
                 print("Chisel is selected")
-                self.make_fragmentation_config_v2ray(config_file_path)
-                self.run_Chisel()
+                port = self.make_fragmentation_config_v2ray(config_file_path)
+                self.run_Chisel(port)
                 config_file_path = (
                     f"{config_path()}\\v2ray_profiles\\fragment\\temp.json"
                 )
@@ -1109,6 +1111,7 @@ class MainGUI:
         ) as json_file:
             # Write the JSON data to the file
             json.dump(json_data, json_file)
+        return port
 
     def make_fragmentation_config_gost(self, file_path):
         with open(f"{file_path}", "r") as json_file:

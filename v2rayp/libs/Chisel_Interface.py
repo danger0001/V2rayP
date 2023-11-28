@@ -16,15 +16,11 @@ from libs.in_win import config_path, inside_windows
 class Chisel_Interface:
     local_socket = ""
 
-    def __init__(
-        self,
-        listen_PORT,
-        Chisel_Address,
-        Chisel_port,
-    ):
+    def __init__(self, listen_PORT, Chisel_Address, Chisel_port, v2ray_port):
         self.listen_PORT = listen_PORT  # pyprox listening to 127.0.0.1:listen_PORT
         self.Chisel_Address = Chisel_Address
         self.Chisel_port = Chisel_port
+        self.v2ray_port = v2ray_port
 
         self.mainThread = threading.Thread(target=self.start_tunnel)
         self.mainThread.daemon = True
@@ -33,7 +29,7 @@ class Chisel_Interface:
     def start_tunnel(self):
         print("Hello")
         if inside_windows():
-            cmd = f"{config_path()}\\bin\\chisel.exe client http://{self.Chisel_Address}:{self.Chisel_port} 127.0.0.1:{self.listen_PORT}:127.0.0.1:{self.Chisel_port}"
+            cmd = f"{config_path()}\\bin\\chisel.exe client http://{self.Chisel_Address}:{self.Chisel_port} 127.0.0.1:{self.listen_PORT}:127.0.0.1:{self.v2ray_port}"
         else:
             cmd = f"chmod +x {config_path()}/bin/xray && {config_path()}/bin/chisel client http://boz.imconnect.site:8080 127.0.0.1:5050:127.0.0.1:2096"
         self.thread_run_read_v2ray(cmd)
