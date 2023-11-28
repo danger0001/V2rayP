@@ -672,6 +672,7 @@ class MainGUI:
             self.cloudflare_port,
             int(self.window["segmentation_timeout"].get()),
         )
+        self.GFW_port += 1
 
     def run_Chisel(self, port):
         if self.chisel_interface:
