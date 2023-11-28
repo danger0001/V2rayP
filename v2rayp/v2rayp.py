@@ -91,7 +91,7 @@ class MainGUI:
         self.thrd_check_connection = None
         self.enable_loops = False
         self.updating = False
-        # threading.Thread(target=self._update_debug, daemon=True).start()
+        threading.Thread(target=self._update_debug, daemon=True).start()
 
     def cpulimit(self):
         # Get the current process ID
