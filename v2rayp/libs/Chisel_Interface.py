@@ -46,7 +46,7 @@ class Chisel_Interface:
         # tasklist = ""
         # while "xray" not in tasklist:
         self.chisel_process = subprocess.Popen(
-            cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         # tasklist = os.popen("tasklist").read()
 
@@ -54,7 +54,7 @@ class Chisel_Interface:
         while self.enable_loops:
             line = self.chisel_process.stderr.readline().strip().decode("utf-8")
             if len(line) < 3:
-                time.sleep(0.1)
+                # time.sleep(0.1)
                 continue
             print(line)
 
