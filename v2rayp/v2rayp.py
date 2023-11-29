@@ -317,11 +317,7 @@ class MainGUI:
             ],
             [
                 "Help",
-                [
-                    "About",
-                    "Upgrade V2RayP",
-                    "Force Kill Xray,Gost",
-                ],
+                ["About", "Upgrade V2RayP", "Force Kill Xray,Gost"],
             ],
         ]
         return psg.Menu(menu_def)
@@ -1552,6 +1548,13 @@ class MainGUI:
             elif event == "Force Kill Xray,Gost":
                 self.force_kill_binaries()
 
+            # elif event == "Test1":
+            #     os.system(
+            #         f"start /B start cmd.exe @cmd /k {sys.executable} -m pip install --upgrade v2rayp"
+            #     )
+
+            #     os.popen(f"taskkill /f /pid {os.getpid()}")
+
             elif event == "Upgrade V2RayP":
                 self.upgrade_v2rayp()
             elif event == "About":
@@ -1602,22 +1605,28 @@ class MainGUI:
                 beep_second()
             ########################################
             elif event == "shortcut_startmenu":
-                programdata = (
-                    os.popen("echo %programdata%").read().strip().replace("\n", "")
+                startmenu_folder = (
+                    os.popen('echo "%USERPROFILE%\\Start Menu\\Programs"')
+                    .read()
+                    .strip()
+                    .replace("\n", "")
+                    .replace('"', "")
                 )
-                print(programdata)
+                print(startmenu_folder)
                 try:
-                    os.makedirs(
-                        f"{programdata}\\Microsoft\\Windows\\Start Menu\\Programs\\V2RayP"
-                    )
-                except:
-                    pass
+                    # os.makedirs(f"{startmenu_folder}\\V2RayP")
+                    os.popen(f"mkdir {startmenu_folder}\\V2RayP").read()
+                except Exception as e:
+                    print(f"Error in making shortcut:{e}")
                 exec = sys.executable.replace("python.exe", "pythonw.exe")
                 exec = exec.replace("python3.exe", "pythonw.exe")
-                cmd2 = f'{current_dir}\\libs\\shortcut /t:{exec} /p:"-m v2rayp" /f:"%programdata%\\Microsoft\\Windows\\Start Menu\\Programs\\V2RayP\\V2rayP.lnk" /a:c  /I:{current_dir}\\assets\\icons\\appicon.ico'
-                os.popen(cmd2)
-                cmd3 = f'{current_dir}\\libs\\shortcut /t:cmd.exe /p:"/c {sys.executable} -m pip install v2rayp --upgrade" /f:"%programdata%\\Microsoft\\Windows\\Start Menu\\Programs\\V2RayP\\V2rayP_update.lnk" /a:c  /I:{current_dir}\\assets\\icons\\appicon.ico'
-                os.popen(cmd3)
+                print(
+                    f'{current_dir}\\libs\\shortcut /t:{exec} /p:"-m v2rayp" /f:"{startmenu_folder}\\V2RayP\\V2rayP.lnk" /a:c  /I:"{current_dir}\\assets\\icons\\appicon.ico"'
+                )
+                cmd2 = f'{current_dir}\\libs\\shortcut /t:{exec} /p:"-m v2rayp" /f:"{startmenu_folder}\\V2RayP\\V2rayP.lnk" /a:c  /I:"{current_dir}\\assets\\icons\\appicon.ico"'
+                os.popen(cmd2).read()
+                cmd3 = f'{current_dir}\\libs\\shortcut /t:cmd.exe /p:"/c {sys.executable} -m pip install v2rayp --upgrade" /f:"{startmenu_folder}\\V2RayP\\V2rayP_update.lnk" /a:c  /I:"{current_dir}\\assets\\icons\\appicon.ico"'
+                os.popen(cmd3).read()
 
             elif event == "shortcut":
                 if inside_windows():
