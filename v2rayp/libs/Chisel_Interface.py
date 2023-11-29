@@ -46,7 +46,7 @@ class Chisel_Interface:
         # tasklist = ""
         # while "xray" not in tasklist:
         self.chisel_process = subprocess.Popen(
-            cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         # tasklist = os.popen("tasklist").read()
 

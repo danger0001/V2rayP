@@ -681,11 +681,10 @@ class MainGUI:
         temp_Port = random.randint(1000, 9999)
         while self.is_port_busy(temp_Port):
             temp_Port = random.randint(1000, 9999)
+        print(f"This is temp port: {temp_Port}")
         return temp_Port
 
     def run_GFW(self):
-        self.temp_Port = 2500  # self.random_port()
-
         if self.gfw_interface:
             self.gfw_interface.stop()
         self.gfw_interface = GFW_Interface(
@@ -697,8 +696,6 @@ class MainGUI:
         )
 
     def run_Chisel(self, port):
-        self.temp_Port = 2500  # self.random_port()
-
         if self.chisel_interface:
             self.chisel_interface.stop()
         self.chisel_interface = Chisel_Interface(
@@ -1054,6 +1051,7 @@ class MainGUI:
             )
             if not inside_windows():
                 config_file_path = config_file_path.replace("\\", "/")
+
             if use_fragmentation:
                 self.make_fragmentation_config_v2ray(config_file_path)
                 self.run_GFW()
@@ -1104,6 +1102,7 @@ class MainGUI:
         ##############
 
     def make_fragmentation_config_v2ray(self, file_path):
+        self.temp_Port = self.random_port()
         with open(f"{file_path}", "r") as json_file:
             # Load the JSON data from the file
             json_data = json.load(json_file)
@@ -1113,12 +1112,16 @@ class MainGUI:
             address = json_data["outbounds"][0]["settings"]["vnext"][0]["address"]
             port = json_data["outbounds"][0]["settings"]["vnext"][0]["port"]
             json_data["outbounds"][0]["settings"]["vnext"][0]["address"] = "127.0.0.1"
-            json_data["outbounds"][0]["settings"]["vnext"][0]["port"] = self.temp_Port
+            json_data["outbounds"][0]["settings"]["vnext"][0][
+                "port"
+            ] = f"{self.temp_Port}"
         elif self.protocol == "trojan":
             address = json_data["outbounds"][0]["settings"]["servers"][0]["address"]
             port = json_data["outbounds"][0]["settings"]["servers"][0]["port"]
             json_data["outbounds"][0]["settings"]["servers"][0]["address"] = "127.0.0.1"
-            json_data["outbounds"][0]["settings"]["servers"][0]["port"] = self.temp_Port
+            json_data["outbounds"][0]["settings"]["servers"][0][
+                "port"
+            ] = f"{self.temp_Port}"
 
         self.cloudflare_port = port
         print("This is port", self.cloudflare_port)
