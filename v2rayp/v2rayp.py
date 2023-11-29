@@ -3,6 +3,7 @@ import io
 import json
 import multiprocessing
 import os
+import socket
 import subprocess
 import sys
 import threading
@@ -78,7 +79,7 @@ class MainGUI:
         self._generate_layout()
         self.mline_text = ""
         self.connectv2ray = None
-        self.GFW_port = 2500
+        self.temp_Port = 2500
         self.gfw_interface = None
         self.chisel_interface = None
         self.thrd_check_connection = False
@@ -100,6 +101,23 @@ class MainGUI:
         psutil.Process(pid).nice(psutil.BELOW_NORMAL_PRIORITY_CLASS)
         # Set the CPU affinity mask for the process
         psutil.Process(pid).cpu_affinity([0])
+
+    @staticmethod
+    def is_port_busy(port):
+        # Create a socket object
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        try:
+            # Try to bind the socket to the specified port
+            sock.bind(("localhost", port))
+            # Port is available
+            return False
+        except socket.error as e:
+            # Port is busy
+            return True
+        finally:
+            # Close the socket
+            sock.close()
 
     @staticmethod
     def copy_config_folder():
@@ -659,27 +677,32 @@ class MainGUI:
             self.window["-TABLE-"].update(values=self.rows, select_rows=[sel])
 
     def run_GFW(self):
+        while self.is_port_busy(self.temp_Port):
+            self.temp_Port += 1
+
         if self.gfw_interface:
             self.gfw_interface.stop()
         self.gfw_interface = GFW_Interface(
             int(self.window["num_of_fragments"].get()),
-            self.GFW_port,
+            self.temp_Port,
             self.window["cloudflare_address"].get(),
             self.cloudflare_port,
             int(self.window["segmentation_timeout"].get()),
         )
-        self.GFW_port += 1
 
     def run_Chisel(self, port):
+        while self.is_port_busy(self.temp_Port):
+            self.temp_Port += 1
+
         if self.chisel_interface:
             self.chisel_interface.stop()
         self.chisel_interface = Chisel_Interface(
-            self.GFW_port,
+            self.temp_Port,
             self.window["chisel_address"].get(),
             self.window["chisel_port"].get(),
             port,
         )
-        self.GFW_port = self.GFW_port + 1
+        self.temp_Port = self.temp_Port + 1
 
     def config2url(self, sel):
         filename = str(self.rows_dict[sel]["remark"])
@@ -1086,12 +1109,12 @@ class MainGUI:
             address = json_data["outbounds"][0]["settings"]["vnext"][0]["address"]
             port = json_data["outbounds"][0]["settings"]["vnext"][0]["port"]
             json_data["outbounds"][0]["settings"]["vnext"][0]["address"] = "127.0.0.1"
-            json_data["outbounds"][0]["settings"]["vnext"][0]["port"] = self.GFW_port
+            json_data["outbounds"][0]["settings"]["vnext"][0]["port"] = self.temp_Port
         elif self.protocol == "trojan":
             address = json_data["outbounds"][0]["settings"]["servers"][0]["address"]
             port = json_data["outbounds"][0]["settings"]["servers"][0]["port"]
             json_data["outbounds"][0]["settings"]["servers"][0]["address"] = "127.0.0.1"
-            json_data["outbounds"][0]["settings"]["servers"][0]["port"] = self.GFW_port
+            json_data["outbounds"][0]["settings"]["servers"][0]["port"] = self.temp_Port
 
         self.cloudflare_port = port
         print("This is port", self.cloudflare_port)
@@ -1117,7 +1140,7 @@ class MainGUI:
         self.cloudflare_port = int(json_data["remote_port"])
         json_data["sni"] = json_data["remote_address"]
         json_data["remote_address"] = "127.0.0.1"
-        json_data["remote_port"] = self.GFW_port
+        json_data["remote_port"] = self.temp_Port
         cmd = f"mkdir {config_path()}\\gost_profiles\\fragment"
         if not inside_windows():
             cmd = cmd.replace("\\", "/")
