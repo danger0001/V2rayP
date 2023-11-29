@@ -1113,16 +1113,12 @@ class MainGUI:
             address = json_data["outbounds"][0]["settings"]["vnext"][0]["address"]
             port = json_data["outbounds"][0]["settings"]["vnext"][0]["port"]
             json_data["outbounds"][0]["settings"]["vnext"][0]["address"] = "127.0.0.1"
-            json_data["outbounds"][0]["settings"]["vnext"][0][
-                "port"
-            ] = f"{self.temp_Port}"
+            json_data["outbounds"][0]["settings"]["vnext"][0]["port"] = self.temp_Port
         elif self.protocol == "trojan":
             address = json_data["outbounds"][0]["settings"]["servers"][0]["address"]
             port = json_data["outbounds"][0]["settings"]["servers"][0]["port"]
             json_data["outbounds"][0]["settings"]["servers"][0]["address"] = "127.0.0.1"
-            json_data["outbounds"][0]["settings"]["servers"][0][
-                "port"
-            ] = f"{self.temp_Port}"
+            json_data["outbounds"][0]["settings"]["servers"][0]["port"] = self.temp_Port
 
         self.cloudflare_port = port
         print("This is port", self.cloudflare_port)

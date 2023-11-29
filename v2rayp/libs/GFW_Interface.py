@@ -21,7 +21,6 @@ class GFW_Interface:
         listen_PORT,
         Cloudflare_IP,
         Cloudflare_port,
-        from_cmd=False,
         GFW_Timeout=10,
     ):
         self.num_fragment = num_fragment
