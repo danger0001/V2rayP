@@ -678,9 +678,9 @@ class MainGUI:
             self.window["-TABLE-"].update(values=self.rows, select_rows=[sel])
 
     def random_port(self):
-        temp_Port = random.randint(1000, 9999)
+        temp_Port = random.randint(2000, 9999)
         while self.is_port_busy(temp_Port):
-            temp_Port = random.randint(1000, 9999)
+            temp_Port = random.randint(2000, 9999)
         print(f"This is temp port: {temp_Port}")
         return temp_Port
 
@@ -1023,21 +1023,22 @@ class MainGUI:
         group = self.rows_dict[sel]["group"]
         #####################
         if use_fragmentation:
-            # ch = psg.popup_ok_cancel(
-            #     "The fragmentation is selected!\nAre you sure?",
-            #     title="Warning",
-            #     keep_on_top=True,
-            # )
-
             answer = tkinter.messagebox.askyesno(
                 "Confirmation",
                 "The fragmentation is selected!\nAre you sure?",
             )
-
             if not answer:
                 return
 
         use_chisel = bool(self.window["use_chisel"].get())
+
+        if use_chisel:
+            answer = tkinter.messagebox.askyesno(
+                "Confirmation",
+                "The chisel is selected!\nAre you sure?",
+            )
+            if not answer:
+                return
 
         if protocol in ("vless", "vmess", "trojan"):  # using v2ray
             #####################
@@ -1063,8 +1064,8 @@ class MainGUI:
 
             elif use_chisel:
                 print("Chisel is selected")
-                port = self.make_fragmentation_config_v2ray(config_file_path)
-                self.run_Chisel(port)
+                v2ray_port = self.make_fragmentation_config_v2ray(config_file_path)
+                self.run_Chisel(v2ray_port)
                 config_file_path = (
                     f"{config_path()}\\v2ray_profiles\\fragment\\temp.json"
                 )

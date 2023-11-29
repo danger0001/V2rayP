@@ -6,12 +6,11 @@ import threading
 import time
 from threading import Thread
 
+try:
+    sys.path.append("D:\\Codes\\V2rayP\\v2rayp")
+except:
+    pass
 from libs.in_win import config_path, inside_windows
-
-# sys.path.append("D:\\Codes\\V2rayP\\v2rayp\\libs")
-
-
-# from .in_win import config_path, inside_windows
 
 
 class Chisel_Interface:
@@ -23,38 +22,56 @@ class Chisel_Interface:
         self.Chisel_port = Chisel_port
         self.v2ray_port = v2ray_port
 
+        self.isconnected = False
         self.mainThread = threading.Thread(target=self.start_tunnel)
         self.mainThread.daemon = True
         self.mainThread.start()
+
+        self.chisel_connection_check()
+
+    def chisel_connection_check(self):
+        if inside_windows():
+            while "chisel" not in os.popen("tasklist").read():
+                time.sleep(0.5)
+        cnt = 0
+        while not self.isconnected:
+            print("Waiting for chisel...")
+            if cnt >= 10:
+                print("Chisel error not connecting!")
+                self.stop()
+                return
+            else:
+                cnt += 1
+            time.sleep(1)
+        print("Chisel connected...")
 
     def start_tunnel(self):
         print("Hello")
         if inside_windows():
             cmd = f"{config_path()}\\bin\\chisel.exe client http://{self.Chisel_Address}:{self.Chisel_port} 127.0.0.1:{self.listen_PORT}:127.0.0.1:{self.v2ray_port}"
         else:
-            cmd = f"chmod +x {config_path()}/bin/xray && {config_path()}/bin/chisel client http://boz.imconnect.site:8080 127.0.0.1:5050:127.0.0.1:2096"
-        self.thread_run_read_v2ray(cmd)
+            cmd = f"chmod +x {config_path()}/bin/chisel && {config_path()}/bin/chisel client http://{self.Chisel_Address}:{self.Chisel_port} 127.0.0.1:{self.listen_PORT}:127.0.0.1:{self.v2ray_port}"
 
-    def thread_run_read_v2ray(self, cmd):
+        self.run_read_v2ray(cmd)
+
+    def run_read_v2ray(self, cmd):
         self.enable_loops = True
         print("thread_run_read_v2ray is ran")
 
-        err_cnt = 0
-
         print("cmd before: " + cmd)
 
-        # tasklist = ""
-        # while "xray" not in tasklist:
         self.chisel_process = subprocess.Popen(
             cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
-        # tasklist = os.popen("tasklist").read()
 
         print("next line")
         while self.enable_loops:
             line = self.chisel_process.stderr.readline().strip().decode("utf-8")
+            if "Connected" in line:
+                self.isconnected = True
+
             if len(line) < 3:
-                # time.sleep(0.1)
+                time.sleep(0.1)
                 continue
             print(line)
 
@@ -68,36 +85,31 @@ class Chisel_Interface:
                 os.popen("taskkill /f /im chisel*").read()
         except:
             print("error closing..")
-        # GFW_thread_id = self.mainThread.ident
-        # ctypes.pythonapi.PyThreadState_SetAsyncExc(
-        #     GFW_thread_id, ctypes.py_object(SystemExit)
-        # )
-        # self.mainThread.join(1)
 
-        try:
-            self.mainThread.kill()
-            self.mainThread.terminate()
+        # try:
+        #     self.mainThread.kill()
+        #     self.mainThread.terminate()
 
-        except:
-            pass
-        # self.mainThread.join()
+        # except:
+        #     pass
+
         print(f"Subprocess {self.mainThread.name} alive: {self.mainThread.is_alive}")
-        # self.mainThread.join(2)
 
 
-# Start the tunne
 if __name__ == "__main__":
     multiprocessing.freeze_support()
     try:
         listen_PORT = int(sys.argv[2])  # pyprox listening to 127.0.0.1:listen_PORT
-        Cloudflare_IP = sys.argv[1]
-        Cloudflare_port = int(sys.argv[3])
-        Chisel_Interface(listen_PORT, Cloudflare_IP, Cloudflare_port)
+        Chisel_Address = sys.argv[1]
+        Chisel_port = int(sys.argv[3])
+        v2ray_port = int(sys.argv[4])
+        Chisel_Interface(listen_PORT, Chisel_Address, Chisel_port, v2ray_port)
     except:
-        listen_PORT = 5050
-        Cloudflare_IP = ""
-        Cloudflare_port = 2096
-        Chisel_Interface(listen_PORT, Cloudflare_IP, Cloudflare_port)
+        listen_PORT = 2500
+        Chisel_Address = "boz.imconnect.site"
+        Chisel_port = 8080
+        v2ray_port = 2096
+        Chisel_Interface(listen_PORT, Chisel_Address, Chisel_port, v2ray_port)
     while True:
         time.sleep(10)
         ##########################################################

@@ -1,4 +1,5 @@
 import json
+import multiprocessing
 import os
 import platform
 import subprocess
@@ -49,6 +50,10 @@ class ConnectV2Ray:
         self.v2ray_thread = threading.Thread(
             target=self.thread_run_read_v2ray, args=(cmd,), daemon=True
         )
+        # self.v2ray_thread = multiprocessing.Process(
+        #     target=self.thread_run_read_v2ray, args=(cmd,), daemon=True
+        # )
+
         self.v2ray_thread.start()
         return self.v2ray_thread
 
@@ -67,6 +72,7 @@ class ConnectV2Ray:
             os.popen(f"taskkill /f /pid {self.v2ray_process.pid}")
             self.v2ray_process.kill()
         # os.popen("taskkill /f /im xray.exe").read()
+
         self.v2ray_thread.join(1)
 
     def cmd_generator(
