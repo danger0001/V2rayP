@@ -3,6 +3,7 @@ import io
 import json
 import multiprocessing
 import os
+import random
 import socket
 import subprocess
 import sys
@@ -676,9 +677,14 @@ class MainGUI:
             self.rows[sel][8] = -1
             self.window["-TABLE-"].update(values=self.rows, select_rows=[sel])
 
+    def random_port(self):
+        temp_Port = random.randint(1000, 9999)
+        while self.is_port_busy(temp_Port):
+            temp_Port = random.randint(1000, 9999)
+        return temp_Port
+
     def run_GFW(self):
-        while self.is_port_busy(self.temp_Port):
-            self.temp_Port += 1
+        self.temp_Port = 2500  # self.random_port()
 
         if self.gfw_interface:
             self.gfw_interface.stop()
@@ -691,8 +697,7 @@ class MainGUI:
         )
 
     def run_Chisel(self, port):
-        while self.is_port_busy(self.temp_Port):
-            self.temp_Port += 1
+        self.temp_Port = 2500  # self.random_port()
 
         if self.chisel_interface:
             self.chisel_interface.stop()
@@ -702,7 +707,6 @@ class MainGUI:
             self.window["chisel_port"].get(),
             port,
         )
-        self.temp_Port = self.temp_Port + 1
 
     def config2url(self, sel):
         filename = str(self.rows_dict[sel]["remark"])

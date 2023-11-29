@@ -6,9 +6,10 @@ import threading
 import time
 from threading import Thread
 
-sys.path.append("D:\\Codes\\V2rayP\\v2rayp\\libs")
-
 from libs.in_win import config_path, inside_windows
+
+# sys.path.append("D:\\Codes\\V2rayP\\v2rayp\\libs")
+
 
 # from .in_win import config_path, inside_windows
 
@@ -64,7 +65,7 @@ class Chisel_Interface:
         # self.local_socket.setblocking(False)
         try:
             if inside_windows:
-                os.popen("taskkill /f /im *chisel*")
+                os.popen("taskkill /f /im chisel*").read()
         except:
             print("error closing..")
         # GFW_thread_id = self.mainThread.ident
