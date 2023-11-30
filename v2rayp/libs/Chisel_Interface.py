@@ -1,10 +1,8 @@
-import multiprocessing
 import os
 import subprocess
 import sys
 import threading
 import time
-from threading import Thread
 
 try:
     sys.path.append("D:\\Codes\\V2rayP\\v2rayp")
@@ -24,15 +22,19 @@ class Chisel_Interface:
 
         self.isconnected = False
         self.mainThread = threading.Thread(target=self.start_tunnel, daemon=True)
+
+        # self.mainThread = multiprocessing.Process(target=self.start_tunnel, daemon=True)
         self.mainThread.start()
 
-        self.chisel_connection_check()
+        while not self.chisel_connection_check():
+            self.mainThread = threading.Thread(target=self.start_tunnel, daemon=True)
+            self.mainThread.start()
 
     def chisel_connection_check(self):
         cnt = 0
         while not self.isconnected:
             print("Waiting for chisel...")
-            if cnt >= 5:
+            if cnt >= 2:
                 print("Chisel error not connecting!")
                 self.stop()
                 return False
@@ -84,12 +86,12 @@ class Chisel_Interface:
         except:
             print("error closing..")
 
-        # try:
-        #     self.mainThread.kill()
-        #     self.mainThread.terminate()
+        try:
+            self.mainThread.kill()
+            self.mainThread.terminate()
 
-        # except:
-        #     pass
+        except:
+            pass
 
         print(f"Subprocess {self.mainThread.name} alive: {self.mainThread.is_alive}")
 

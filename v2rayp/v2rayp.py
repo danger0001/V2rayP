@@ -969,11 +969,17 @@ class MainGUI:
 
     def connect(self, sel):
         self.disconnect()
+        #######################
+        root_onTop = tkinter.Tk()
+
+        root_onTop.wm_attributes("-topmost", 1)
+        root_onTop.withdraw()
         ##################
         if check_process_exists("xray") or check_process_exists("gost"):
             answer = tkinter.messagebox.askyesno(
                 "Confirmation",
                 "Another Gost or Xray process is running!\nDo you want to kill it?",
+                parent=root_onTop,
             )
             if answer:
                 self.force_kill_binaries()
@@ -999,6 +1005,7 @@ class MainGUI:
                 answer = tkinter.messagebox.askyesno(
                     "Confirmation",
                     "You should install Xray.\nDo you want to download Xray?",
+                    parent=root_onTop,
                 )
 
                 if answer:
@@ -1014,6 +1021,7 @@ class MainGUI:
                 answer = tkinter.messagebox.askyesno(
                     "Confirmation",
                     "You should install Gost.\nDo you want to download Gost?",
+                    parent=root_onTop,
                 )
 
                 if answer:
@@ -1027,17 +1035,25 @@ class MainGUI:
             answer = tkinter.messagebox.askyesno(
                 "Confirmation",
                 "The fragmentation is selected!\nAre you sure?",
+                parent=root_onTop,
             )
+
             if not answer:
                 return
 
         use_chisel = bool(self.window["use_chisel"].get())
 
-        if use_chisel and False:
+        if use_chisel:
+            root_onTop = tkinter.Tk()
+
+            root_onTop.wm_attributes("-topmost", 1)
+            root_onTop.withdraw()
             answer = tkinter.messagebox.askyesno(
                 "Confirmation",
                 "The chisel is selected!\nAre you sure?",
+                parent=root_onTop,
             )
+
             if not answer:
                 return
 
@@ -1102,6 +1118,7 @@ class MainGUI:
         self.thrd_check_connection = threading.Thread(target=self.check_connection)
         self.thrd_check_connection.start()
         ##############
+        root_onTop.destroy()
 
     def swap_v2ray_temp_port(self, file_path):
         self.temp_Port = self.random_port()

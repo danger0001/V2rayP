@@ -64,6 +64,11 @@ class ConnectV2Ray:
         parent.kill()
 
     def kill(self):
+        try:
+            self.v2ray_thread.kill()
+            self.v2ray_thread.terminate()
+        except Exception as e:
+            print(f"Error in killing: {e}")
         self.enable_loops = False
         if self.v2ray_process:
             self.kill_pid(self.v2ray_process.pid)
@@ -72,6 +77,11 @@ class ConnectV2Ray:
             os.popen(f"taskkill /f /pid {self.v2ray_process.pid}")
             self.v2ray_process.kill()
         # os.popen("taskkill /f /im xray.exe").read()
+
+        try:
+            self.v2ray_thread.kill()
+        except:
+            pass
 
         self.v2ray_thread.join(1)
 
@@ -110,7 +120,7 @@ class ConnectV2Ray:
         while self.enable_loops:
             line = self.v2ray_process.stdout.readline().strip().decode("utf-8")
             if len(line) < 3:
-                time.sleep(0.5)
+                time.sleep(0.01)
                 continue
             print(line)
             if "failed to find an available destination" in line:
