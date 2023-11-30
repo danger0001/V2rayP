@@ -1,3 +1,4 @@
+import ctypes
 import os
 import platform
 import subprocess
@@ -72,6 +73,13 @@ class FactorySetting:
 
 
 tmp = temp()
+
+
+def get_screen_size():
+    user32 = ctypes.windll.user32
+    user32.SetProcessDPIAware()
+    width, height = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+    return width, height
 
 
 def download_module(bin_name):

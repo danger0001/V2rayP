@@ -35,6 +35,7 @@ from libs.in_win import (
     check_process_exists,
     config_path,
     download_module,
+    get_screen_size,
     inside_windows,
     reset_proxy_settings,
     set_socks5_proxy,
@@ -1304,7 +1305,7 @@ class MainGUI:
         #         )
         #     ]
         # ]
-
+        s_width, s_height = get_screen_size()
         self.cloudflare_ip = self.settings["cloudflare_address"]
         keep_on_top = self.settings["keep_top"]
         # psg.set_options(scaling=1.5)
@@ -1313,7 +1314,7 @@ class MainGUI:
             "V2rayP",
             icon="assets/icons/appicon.ico",
             layout=layout,
-            size=(1000, 800),
+            size=(int(0.6 * s_width), int(0.6 * s_height)),
             resizable=True,
             # no_titlebar=True,
             finalize=True,
