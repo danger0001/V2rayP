@@ -23,35 +23,31 @@ class Chisel_Interface:
         self.v2ray_port = v2ray_port
 
         self.isconnected = False
-        self.mainThread = threading.Thread(target=self.start_tunnel)
-        self.mainThread.daemon = True
+        self.mainThread = threading.Thread(target=self.start_tunnel, daemon=True)
         self.mainThread.start()
 
         self.chisel_connection_check()
 
     def chisel_connection_check(self):
-        if inside_windows():
-            while "chisel" not in os.popen("tasklist").read():
-                time.sleep(0.5)
         cnt = 0
         while not self.isconnected:
             print("Waiting for chisel...")
-            if cnt >= 10:
+            if cnt >= 5:
                 print("Chisel error not connecting!")
                 self.stop()
-                return
+                return False
             else:
                 cnt += 1
             time.sleep(1)
         print("Chisel connected...")
+        return True
 
     def start_tunnel(self):
-        print("Hello")
         if inside_windows():
             cmd = f"{config_path()}\\bin\\chisel.exe client http://{self.Chisel_Address}:{self.Chisel_port} 127.0.0.1:{self.listen_PORT}:127.0.0.1:{self.v2ray_port}"
         else:
             cmd = f"chmod +x {config_path()}/bin/chisel && {config_path()}/bin/chisel client http://{self.Chisel_Address}:{self.Chisel_port} 127.0.0.1:{self.listen_PORT}:127.0.0.1:{self.v2ray_port}"
-
+        print(f"chisel command: {cmd}")
         self.run_read_v2ray(cmd)
 
     def run_read_v2ray(self, cmd):
@@ -69,6 +65,8 @@ class Chisel_Interface:
             line = self.chisel_process.stderr.readline().strip().decode("utf-8")
             if "Connected" in line:
                 self.isconnected = True
+                print(line)
+                return
 
             if len(line) < 3:
                 time.sleep(0.1)
@@ -107,7 +105,7 @@ if __name__ == "__main__":
     except:
         listen_PORT = 2500
         Chisel_Address = "boz.imconnect.site"
-        Chisel_port = 8080
+        Chisel_port = 8880
         v2ray_port = 2096
         Chisel_Interface(listen_PORT, Chisel_Address, Chisel_port, v2ray_port)
     while True:

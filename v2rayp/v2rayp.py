@@ -623,7 +623,7 @@ class MainGUI:
             print("connection checking...")
 
             self.isConnected = NetTools.is_connected_to_internet(
-                "http://www.msn.com", int(self.local_port)
+                "http://1.1.1.1", int(self.local_port)
             )
             if inside_windows():
                 try:
@@ -698,6 +698,7 @@ class MainGUI:
     def run_Chisel(self, port):
         if self.chisel_interface:
             self.chisel_interface.stop()
+
         self.chisel_interface = Chisel_Interface(
             self.temp_Port,
             self.window["chisel_address"].get(),
@@ -1032,7 +1033,7 @@ class MainGUI:
 
         use_chisel = bool(self.window["use_chisel"].get())
 
-        if use_chisel:
+        if use_chisel and False:
             answer = tkinter.messagebox.askyesno(
                 "Confirmation",
                 "The chisel is selected!\nAre you sure?",
@@ -1054,7 +1055,7 @@ class MainGUI:
                 config_file_path = config_file_path.replace("\\", "/")
 
             if use_fragmentation:
-                self.make_fragmentation_config_v2ray(config_file_path)
+                self.swap_v2ray_temp_port(config_file_path)
                 self.run_GFW()
                 config_file_path = (
                     f"{config_path()}\\v2ray_profiles\\fragment\\temp.json"
@@ -1064,7 +1065,7 @@ class MainGUI:
 
             elif use_chisel:
                 print("Chisel is selected")
-                v2ray_port = self.make_fragmentation_config_v2ray(config_file_path)
+                v2ray_port = self.swap_v2ray_temp_port(config_file_path)
                 self.run_Chisel(v2ray_port)
                 config_file_path = (
                     f"{config_path()}\\v2ray_profiles\\fragment\\temp.json"
@@ -1083,7 +1084,7 @@ class MainGUI:
             if not inside_windows():
                 config_file_path = config_file_path.replace("\\", "/")
             if use_fragmentation:
-                self.make_fragmentation_config_gost(config_file_path)
+                self.swap_gost_temp_port(config_file_path)
                 self.run_GFW()
                 config_file_path = (
                     f"{config_path()}\\gost_profiles\\fragment\\temp.json"
@@ -1102,7 +1103,7 @@ class MainGUI:
         self.thrd_check_connection.start()
         ##############
 
-    def make_fragmentation_config_v2ray(self, file_path):
+    def swap_v2ray_temp_port(self, file_path):
         self.temp_Port = self.random_port()
         with open(f"{file_path}", "r") as json_file:
             # Load the JSON data from the file
@@ -1113,12 +1114,16 @@ class MainGUI:
             address = json_data["outbounds"][0]["settings"]["vnext"][0]["address"]
             port = json_data["outbounds"][0]["settings"]["vnext"][0]["port"]
             json_data["outbounds"][0]["settings"]["vnext"][0]["address"] = "127.0.0.1"
-            json_data["outbounds"][0]["settings"]["vnext"][0]["port"] = self.temp_Port
+            json_data["outbounds"][0]["settings"]["vnext"][0]["port"] = int(
+                self.temp_Port
+            )
         elif self.protocol == "trojan":
             address = json_data["outbounds"][0]["settings"]["servers"][0]["address"]
             port = json_data["outbounds"][0]["settings"]["servers"][0]["port"]
             json_data["outbounds"][0]["settings"]["servers"][0]["address"] = "127.0.0.1"
-            json_data["outbounds"][0]["settings"]["servers"][0]["port"] = self.temp_Port
+            json_data["outbounds"][0]["settings"]["servers"][0]["port"] = int(
+                self.temp_Port
+            )
 
         self.cloudflare_port = port
         print("This is port", self.cloudflare_port)
@@ -1137,7 +1142,7 @@ class MainGUI:
             json.dump(json_data, json_file)
         return port
 
-    def make_fragmentation_config_gost(self, file_path):
+    def swap_gost_temp_port(self, file_path):
         with open(f"{file_path}", "r") as json_file:
             # Load the JSON data from the file
             json_data = json.load(json_file)
