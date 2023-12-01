@@ -94,7 +94,7 @@ class MainGUI:
         self.thrd_check_connection = None
         self.enable_loops = False
         self.updating = False
-        threading.Thread(target=self._update_debug, daemon=True).start()
+        # threading.Thread(target=self._update_debug, daemon=True).start()
 
     def cpulimit(self):
         # Get the current process ID
@@ -960,13 +960,6 @@ class MainGUI:
 
         _, rows = self.referesh_table_content()
         self.window["-TABLE-"].update(rows)
-        # if ("trojan" in url) or ("vless" in url) or ("vmess" in url):
-        #     ut = URLTools_for_V2Ray(url, int(self.local_port))
-        #     config = ut.toJsonConfigString()
-        #     with open(f"{os.getenv('USERPROFILE')}\\appdata\\roaming\v2rayp\configs\\v2ray_profiles\\{ut.profileName}.json", "w") as f:
-        #         f.write(config)
-        # _, rows = self.referesh_table_content()
-        # self.window["-TABLE-"].update(rows)
 
     def connect(self, sel):
         self.disconnect()
@@ -1150,8 +1143,11 @@ class MainGUI:
             cmd = cmd.replace("\\", "/")
         os.popen(cmd).read()
         config_file_path = f"{config_path()}\\v2ray_profiles\\fragment\\temp.json"
+        if inside_windows():
+            os.popen(f"rd {config_file_path}").read()
         if not inside_windows():
             config_file_path = config_file_path.replace("\\", "/")
+            os.popen(f"rm {config_file_path}").read()
         with open(
             config_file_path,
             "w",
@@ -1205,16 +1201,6 @@ class MainGUI:
             new_data = GostGUI(filename, group).start_window()
             if new_data:  # filename, page_data, new_file: bool = False, group=""
                 SaveGUIConfigPage(filename, new_data, True, group)
-
-    # def set_reset_system_proxy(self, mode="reset"):
-    #     if mode == "set":
-    #         cmd = f'reg add \\"HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\\" /v ProxyEnable /t REG_DWORD /d 1 /f && reg add \\"HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\\" /v ProxyServer /t REG_SZ /d \\"socks=127.0.0.1:7595\\" /f'
-
-    #     elif mode == "reset":
-    #         cmd = 'reg add \\"HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings\\" /v ProxyEnable /t REG_DWORD /d 0 /f'
-
-    #     cmd2 = f"powershell Start-Process -WindowStyle Hidden cmd.exe -argumentlist '/k \"{cmd}\"' -Verb Runas; exit"
-    #     subprocess.Popen(cmd2, shell=True)
 
     def run_command_as_admin(self, cmd):
         cmd2 = f"powershell Start-Process -WindowStyle Hidden cmd.exe -argumentlist '/k \"{cmd}\"' -Verb Runas"
@@ -1288,23 +1274,9 @@ class MainGUI:
         window.read()
         window.close()
 
-        # psg.popup_ok(string_about, title="About")
-
     def init_window(self):
         layout = self.layout
 
-        # layout = [
-        #     [
-        #         psg.TabGroup(
-        #             [
-        #                 [
-        #                     psg.Tab("Basic Info", layout),
-        #                     psg.Tab("Contact Details", []),
-        #                 ]
-        #             ]
-        #         )
-        #     ]
-        # ]
         s_width, s_height = get_screen_size()
         self.cloudflare_ip = self.settings["cloudflare_address"]
         keep_on_top = self.settings["keep_top"]

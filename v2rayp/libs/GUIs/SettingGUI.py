@@ -123,21 +123,28 @@ class SettingGUI:
         return layout
 
     def generate_chisel_part(self):
+        try:
+            chaddress = self.settings["chisel_address"]
+            chport = self.settings["chisel_port"]
+        except:
+            chaddress = ""
+            chport = 0
+
         layout = [
             [psg.Text("Chisel Settings:", font=("Arial Bold", 14))],
             [
                 psg.Text("Chisel Address:\t"),
                 psg.InputText(
-                    default_text=self.settings["chisel_address"],
+                    default_text=chaddress,
                     key="chisel_address",
                     size=(20, 10),
                 ),
             ],
             [
-                psg.Text("Chseil Port:\t"),
+                psg.Text("Chisel Port:\t"),
                 psg.InputText(
                     size=(20, 10),
-                    default_text=self.settings["chisel_port"],
+                    default_text=chport,
                     key="chisel_port",
                 ),
             ],

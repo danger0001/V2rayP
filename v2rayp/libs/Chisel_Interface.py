@@ -1,3 +1,4 @@
+import multiprocessing
 import os
 import subprocess
 import sys
@@ -34,7 +35,7 @@ class Chisel_Interface:
         cnt = 0
         while not self.isconnected:
             print("Waiting for chisel...")
-            if cnt >= 2:
+            if cnt >= 10:
                 print("Chisel error not connecting!")
                 self.stop()
                 return False
@@ -86,12 +87,12 @@ class Chisel_Interface:
         except:
             print("error closing..")
 
-        try:
-            self.mainThread.kill()
-            self.mainThread.terminate()
+        # try:
+        #     self.mainThread.kill()
+        #     self.mainThread.terminate()
 
-        except:
-            pass
+        # except:
+        #     pass
 
         print(f"Subprocess {self.mainThread.name} alive: {self.mainThread.is_alive}")
 
