@@ -82,6 +82,8 @@ class MainGUI:
         threading.Thread(target=self._update_debug, daemon=True).start()
 
     def cpulimit(self):
+        if not inside_windows():
+            return
         # Get the current process ID
         pid = psutil.Process().pid
         # Set the process priority class to "below normal"
