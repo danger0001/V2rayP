@@ -28,18 +28,8 @@ from libs.GUIs.SettingGUI import SettingGUI
 from libs.GUIs.TrojanGUI import TrojanGUI
 from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
-from libs.in_win import (
-    FactorySetting,
-    beep,
-    beep_second,
-    check_process_exists,
-    config_path,
-    download_module,
-    get_screen_size,
-    inside_windows,
-    reset_proxy_settings,
-    set_socks5_proxy,
-)
+from libs.in_win import FactorySetting, beep, beep_second, check_process_exists, config_path, download_module, \
+    get_screen_size, inside_windows, reset_proxy_settings, set_socks5_proxy
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
 from libs.RefereshEditPage import RefereshEditPage
@@ -1271,8 +1261,8 @@ class MainGUI:
 
     def init_window(self):
         layout = self.layout
-
-        s_width, s_height = get_screen_size()
+        if inside_windows():
+            s_width, s_height = get_screen_size()
         self.cloudflare_ip = self.settings["cloudflare_address"]
         keep_on_top = self.settings["keep_top"]
         # psg.set_options(scaling=1.5)
@@ -1281,12 +1271,14 @@ class MainGUI:
             "V2rayP",
             icon="assets/icons/appicon.ico",
             layout=layout,
-            size=(int(0.6 * s_width), int(0.6 * s_height)),
             resizable=True,
             # no_titlebar=True,
             finalize=True,
             grab_anywhere=True,
             keep_on_top=keep_on_top,
+            # size=(int(0.6 * s_width), int(0.6 * s_height))
+            # if inside_windows()
+            # else (None, None),
         )
 
         self.root_of_windows = self.window.TKroot
