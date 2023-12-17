@@ -1,7 +1,6 @@
 import os
 
 from setuptools import find_packages, setup
-
 from v2rayp.__version__ import __version__
 
 
