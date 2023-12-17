@@ -4,7 +4,6 @@ import platform
 import subprocess
 import sys
 import threading
-import winreg
 
 import psutil
 
@@ -264,32 +263,35 @@ if __name__ == "__main__":
 
 
 def set_socks5_proxy(proxy_address, proxy_port):
-    # Open the Internet Settings registry key
-    reg_key = winreg.OpenKey(
-        winreg.HKEY_CURRENT_USER,
-        r"Software\Microsoft\Windows\CurrentVersion\Internet Settings",
-        0,
-        winreg.KEY_WRITE,
-    )
+    if inside_windows():
+        import winreg
 
-    # Enable proxy settings
-    winreg.SetValueEx(reg_key, "ProxyEnable", 0, winreg.REG_DWORD, 1)
+        # Open the Internet Settings registry key
+        reg_key = winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER,
+            r"Software\Microsoft\Windows\CurrentVersion\Internet Settings",
+            0,
+            winreg.KEY_WRITE,
+        )
 
-    # Set the proxy server address
-    winreg.SetValueEx(
-        reg_key, "ProxyServer", 0, winreg.REG_SZ, f"{proxy_address}:{proxy_port}"
-    )
+        # Enable proxy settings
+        winreg.SetValueEx(reg_key, "ProxyEnable", 0, winreg.REG_DWORD, 1)
 
-    # Set the proxy type to SOCKS5
-    winreg.SetValueEx(reg_key, "ProxyServerType", 0, winreg.REG_DWORD, 5)
+        # Set the proxy server address
+        winreg.SetValueEx(
+            reg_key, "ProxyServer", 0, winreg.REG_SZ, f"{proxy_address}:{proxy_port}"
+        )
 
-    # Enable proxy override
-    winreg.SetValueEx(reg_key, "ProxyOverride", 0, winreg.REG_SZ, "<local>")
+        # Set the proxy type to SOCKS5
+        winreg.SetValueEx(reg_key, "ProxyServerType", 0, winreg.REG_DWORD, 5)
 
-    # Close the registry key
-    winreg.CloseKey(reg_key)
+        # Enable proxy override
+        winreg.SetValueEx(reg_key, "ProxyOverride", 0, winreg.REG_SZ, "<local>")
 
-    print("SOCKS5 proxy successfully set.")
+        # Close the registry key
+        winreg.CloseKey(reg_key)
+
+        print("SOCKS5 proxy successfully set.")
 
 
 def reset_proxy_settings():

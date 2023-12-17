@@ -94,7 +94,7 @@ class MainGUI:
         self.thrd_check_connection = None
         self.enable_loops = False
         self.updating = False
-        # threading.Thread(target=self._update_debug, daemon=True).start()
+        threading.Thread(target=self._update_debug, daemon=True).start()
 
     def cpulimit(self):
         # Get the current process ID
@@ -1636,8 +1636,8 @@ class MainGUI:
                 )
                 print(startmenu_folder)
                 try:
-                    # os.makedirs(f"{startmenu_folder}\\V2RayP")
-                    os.popen(f"mkdir {startmenu_folder}\\V2RayP").read()
+                    os.makedirs(f"{startmenu_folder}\\V2RayP")
+                    # os.popen(f"mkdir {startmenu_folder}\\V2RayP").read()
                 except Exception as e:
                     print(f"Error in making shortcut:{e}")
                 exec = sys.executable.replace("python.exe", "pythonw.exe")
