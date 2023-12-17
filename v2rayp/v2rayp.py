@@ -48,11 +48,6 @@ from libs.SaveGUIConfigPage import SaveGUIConfigPage
 from libs.Subscriptions import Subscriptions
 from libs.V2RayURL2Config import generateConfig
 
-# sys.path.append(
-#     "libs"
-# )  # add to settings.json -> "python.analysis.extraPaths": [ "libs"  ],"python.linting.pylintArgs": [ "--init-hook", "import sys; sys.path.append('libs')"]
-
-
 if inside_windows():
     from psgtray import SystemTray
 
