@@ -1063,7 +1063,7 @@ class MainGUI:
 
             if use_fragmentation:
                 # self.swap_v2ray_temp_port(config_file_path)
-                self.swap_v2ray_new_method_xray_1_8(config_file_path)
+                self.v2ray_fragment_xray_1_8(config_file_path)
                 # self.run_GFW()
                 config_file_path = (
                     f"{config_path()}\\v2ray_profiles\\fragment\\temp.json"
@@ -1080,6 +1080,10 @@ class MainGUI:
                 )
                 if not inside_windows():
                     config_file_path = config_file_path.replace("\\", "/")
+
+            self.bypass_iran = self.window["bypass_iran"].get()
+            if self.bypass_iran:
+                self.v2ray_bypass_iran(config_file_path)
 
             self.connectv2ray = ConnectV2Ray(config_file_path, self.local_port)
             self.connectv2ray.connect()
@@ -1154,7 +1158,33 @@ class MainGUI:
             json.dump(json_data, json_file)
         return port
 
-    def swap_v2ray_new_method_xray_1_8(self, file_path):
+    def v2ray_bypass_iran(self, file_path):
+        with open(f"{file_path}", "r") as json_file:
+            # Load the JSON data from the file
+            json_data = json.load(json_file)
+
+        # Add the new rule to the routing object
+        new_rule = {
+            "type": "field",
+            "outboundTag": "direct",
+            "domain": [
+                "regexp:.*\\.ir$",
+                "ext:iran.dat:ir",
+                "ext:iran.dat:other",
+                # "geosite:category-ir",
+                # "regexp:.*\\.ir$",
+                # "regexp:.*\\.xn--mgba3a4f16a$",
+            ],
+        }
+        json_data["routing"]["rules"].append(new_rule)
+        config_file_path = f"{config_path()}\\v2ray_profiles\\fragment\\temp.json"
+        # Save the modified JSON file
+        with open(config_file_path, "w") as f:
+            json.dump(json_data, f, indent=4)
+
+        return
+
+    def v2ray_fragment_xray_1_8(self, file_path):
         with open(f"{file_path}", "r") as json_file:
             # Load the JSON data from the file
             json_data = json.load(json_file)

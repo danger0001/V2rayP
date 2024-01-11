@@ -5,6 +5,7 @@ rmdir /q /s  V2RayP.egg-info
 
 python3 setup.py sdist
 
-python3  -m twine upload dist/*
+python3  -m twine upload dist/* --repository-url https://upload.pypi.org/legacy/
 
 ;cyberchain,Im15
+;__token__,from website
