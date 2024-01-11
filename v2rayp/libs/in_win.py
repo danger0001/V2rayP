@@ -2,6 +2,7 @@ import ctypes
 import os
 import platform
 import threading
+import time
 
 # Define the local filename to save data
 import requests
@@ -115,9 +116,15 @@ def download_module(bin_name):
 
 
 def download_xray_gost(window, enable_download: pass_by_ref, filename):
+    #######################################################################
+    url = "https://raw.githubusercontent.com/iblockchaincyberchain/v2rayp_bin/main/iran.dat"
+    irandat = "iran.dat"
+    download_binary(url, irandat, window, enable_download)
+    time.sleep(0.5)
+    ######################################################################
     if filename == "xray":
         if platform.system() == "Windows":
-            url = "https://github.com/iblockchaincyberchain/v2rayp_bin/raw/main/win/xray.exe"
+            url = "https://raw.githubusercontent.com/iblockchaincyberchain/v2rayp_bin/main/win/xray.exe"
             filename = "xray.exe"
 
         elif platform.system() == "Linux":
@@ -181,13 +188,11 @@ def download_binary(url, filename, window, enable_download: pass_by_ref):
                 break
             size = file.write(data)
             sum = sum + size
-            # print(
-            #     f"downloading: {int(100 * sum / total)}%, downloaded {int(sum/1024)} from {int(total/1024)} KBytes."
-            # )
             perc = int(100 * sum / total)
             pbar.update(perc)
+            if perc >= 100:
+                perc = 100
             percentage.update(f"Total Percentage is: {perc}%")
-    # window.close()
     os.chdir(path)
     if not inside_windows():
         os.popen(f"mv {path}/{filename}.tmp {path}/{filename}").read()

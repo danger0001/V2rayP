@@ -28,18 +28,8 @@ from libs.GUIs.SettingGUI import SettingGUI
 from libs.GUIs.TrojanGUI import TrojanGUI
 from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
-from libs.in_win import (
-    FactorySetting,
-    beep,
-    beep_second,
-    check_process_exists,
-    config_path,
-    download_module,
-    get_screen_size,
-    inside_windows,
-    reset_proxy_settings,
-    set_socks5_proxy,
-)
+from libs.in_win import FactorySetting, beep, beep_second, check_process_exists, config_path, download_module, \
+    get_screen_size, inside_windows, reset_proxy_settings, set_socks5_proxy
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
 from libs.RefereshEditPage import RefereshEditPage
@@ -1406,42 +1396,7 @@ class MainGUI:
     def download_the_module(self, bin_name):
         self.disconnect()
         multiprocessing.Process(target=download_module, args=(bin_name,)).start()
-        # download_module
-        # print("*************************")
-        # print("Disconnected to download.")
-        # self.progressbar_window = None
-        # layout = [
-        #     [psg.ProgressBar(100, key="progressbar2", size=(35, 20))],
-        #     [psg.Text(key="percentage")],
-        #     [psg.Button("Cancel")],
-        # ]
-
-        # self.progressbar_window = psg.Window(
-        #     f"Downloading {bin_name}...",
-        #     layout=layout,
-        #     keep_on_top=True,
-        # )
-        # self.progressbar_window.finalize()
-        # enable_download = pass_by_ref()
-        # enable_download.value = True
-
-        # threading.Thread(
-        #     target=download_xray_gost,
-        #     args=(self.progressbar_window, enable_download, bin_name),
-        # ).start()
-        # while True:
-        #     event, values = self.progressbar_window.read(timeout=2000)
-        #     if (
-        #         event in (None, "Cancel", psg.WIN_CLOSED)
-        #         or "100" in self.progressbar_window["percentage"].get()
-        #     ):
-        #         enable_download.value = False
-        #         print(enable_download.value)
-        #         self.progressbar_window.close()
-
-        #         break
-        # self.progressbar_window.close()
-
+    
     def upgrade_v2rayp(self):
         resp = psg.popup_ok_cancel(
             "Do you want to update from here?\nAfter upgrading you should exit and open v2rayp again.",
