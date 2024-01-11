@@ -1083,12 +1083,13 @@ class MainGUI:
             #######################IRAN Bypass##############################
             self.bypass_iran = self.window["bypass_iran"].get()
             if self.bypass_iran:
+                self.v2ray_bypass_iran(config_file_path)
                 config_file_path = (
                     f"{config_path()}\\v2ray_profiles\\fragment\\temp.json"
                 )
                 if not inside_windows():
                     config_file_path = config_file_path.replace("\\", "/")
-                self.v2ray_bypass_iran(config_file_path)
+
             #####################################################
             self.connectv2ray = ConnectV2Ray(config_file_path, self.local_port)
             self.connectv2ray.connect()
