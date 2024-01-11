@@ -28,8 +28,18 @@ from libs.GUIs.SettingGUI import SettingGUI
 from libs.GUIs.TrojanGUI import TrojanGUI
 from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
-from libs.in_win import FactorySetting, beep, beep_second, check_process_exists, config_path, download_module, \
-    get_screen_size, inside_windows, reset_proxy_settings, set_socks5_proxy
+from libs.in_win import (
+    FactorySetting,
+    beep,
+    beep_second,
+    check_process_exists,
+    config_path,
+    download_module,
+    get_screen_size,
+    inside_windows,
+    reset_proxy_settings,
+    set_socks5_proxy,
+)
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
 from libs.RefereshEditPage import RefereshEditPage
@@ -1052,8 +1062,9 @@ class MainGUI:
                 config_file_path = config_file_path.replace("\\", "/")
 
             if use_fragmentation:
-                self.swap_v2ray_temp_port(config_file_path)
-                self.run_GFW()
+                # self.swap_v2ray_temp_port(config_file_path)
+                self.swap_v2ray_new_method_xray_1_8(config_file_path)
+                # self.run_GFW()
                 config_file_path = (
                     f"{config_path()}\\v2ray_profiles\\fragment\\temp.json"
                 )
@@ -1142,6 +1153,57 @@ class MainGUI:
             # Write the JSON data to the file
             json.dump(json_data, json_file)
         return port
+
+    def swap_v2ray_new_method_xray_1_8(self, file_path):
+        with open(f"{file_path}", "r") as json_file:
+            # Load the JSON data from the file
+            json_data = json.load(json_file)
+        self.protocol = json_data["outbounds"][0]["protocol"]
+
+        if self.protocol in ("vless", "vmess"):
+            json_data["outbounds"][0]["settings"]["vnext"][0]["address"] = self.window[
+                "cloudflare_address"
+            ].get()
+        elif self.protocol == "trojan":
+            json_data["outbounds"][0]["settings"]["servers"][0][
+                "address"
+            ] = self.window["cloudflare_address"].get()
+        self.num_fragment = int(self.window["num_of_fragments"].get())
+        json_data["outbounds"].append(
+            {
+                "tag": "fragment",
+                "protocol": "freedom",
+                "settings": {
+                    "fragment": {
+                        "packets": "tlshello",
+                        "length": f"{int(self.num_fragment/2)}-{int(self.num_fragment)}",  # "100-200",
+                        "interval": "1-10",
+                    }
+                },
+                "streamSettings": {"sockopt": {"TcpNoDelay": True, "mark": 255}},
+            }
+        )
+        json_data["outbounds"][0]["streamSettings"]["sockopt"] = {
+            "TcpNoDelay": True,
+            "mark": 255,
+        }
+        cmd = f"mkdir {config_path()}\\v2ray_profiles\\fragment"
+        if not inside_windows():
+            cmd = cmd.replace("\\", "/")
+        os.popen(cmd).read()
+        config_file_path = f"{config_path()}\\v2ray_profiles\\fragment\\temp.json"
+        if inside_windows():
+            os.popen(f"rd {config_file_path}").read()
+        if not inside_windows():
+            config_file_path = config_file_path.replace("\\", "/")
+            os.popen(f"rm {config_file_path}").read()
+        with open(
+            config_file_path,
+            "w",
+        ) as json_file:
+            # Write the JSON data to the file
+            json.dump(json_data, json_file)
+        return
 
     def swap_gost_temp_port(self, file_path):
         with open(f"{file_path}", "r") as json_file:
