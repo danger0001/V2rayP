@@ -28,8 +28,18 @@ from libs.GUIs.SettingGUI import SettingGUI
 from libs.GUIs.TrojanGUI import TrojanGUI
 from libs.GUIs.VlessGUI import VlessGUI
 from libs.GUIs.VmessGUI import VmessGUI
-from libs.in_win import FactorySetting, beep, beep_second, check_process_exists, config_path, download_module, \
-    get_screen_size, inside_windows, reset_proxy_settings, set_socks5_proxy
+from libs.in_win import (
+    FactorySetting,
+    beep,
+    beep_second,
+    check_process_exists,
+    config_path,
+    download_module,
+    get_screen_size,
+    inside_windows,
+    reset_proxy_settings,
+    set_socks5_proxy,
+)
 from libs.NetTools import NetTools
 from libs.QRCode import QRCode
 from libs.RefereshEditPage import RefereshEditPage
@@ -1070,11 +1080,16 @@ class MainGUI:
                 )
                 if not inside_windows():
                     config_file_path = config_file_path.replace("\\", "/")
-
+            #######################IRAN Bypass##############################
             self.bypass_iran = self.window["bypass_iran"].get()
             if self.bypass_iran:
+                config_file_path = (
+                    f"{config_path()}\\v2ray_profiles\\fragment\\temp.json"
+                )
+                if not inside_windows():
+                    config_file_path = config_file_path.replace("\\", "/")
                 self.v2ray_bypass_iran(config_file_path)
-
+            #####################################################
             self.connectv2ray = ConnectV2Ray(config_file_path, self.local_port)
             self.connectv2ray.connect()
         else:  # using gost
@@ -1106,6 +1121,7 @@ class MainGUI:
         ##############
         root_onTop.destroy()
 
+    ###############################################
     def swap_v2ray_temp_port(self, file_path):
         self.temp_Port = self.random_port()
         with open(f"{file_path}", "r") as json_file:
@@ -1396,7 +1412,7 @@ class MainGUI:
     def download_the_module(self, bin_name):
         self.disconnect()
         multiprocessing.Process(target=download_module, args=(bin_name,)).start()
-    
+
     def upgrade_v2rayp(self):
         resp = psg.popup_ok_cancel(
             "Do you want to update from here?\nAfter upgrading you should exit and open v2rayp again.",
